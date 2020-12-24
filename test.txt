@@ -1,0 +1,10 @@
+n1 = 20 - 10 / 2:int;
+main()
+{
+    n2, n3:int;
+	n2 = n1 / (3 + 2);
+	n3 = n1 * n2 - 10 ;
+	print(n1);
+	print(n2);
+	print(n3);
+}
