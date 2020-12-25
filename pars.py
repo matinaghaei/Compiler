@@ -13,33 +13,33 @@ class Parser:
     # part 1 ----------------------------------------------------------------------------------------
     def p_program(self, p):
         "program : declist MAIN LRB RRB block"
-        self.codeGenerator.generate_main_code(p, self.new_temp())
+        self.codeGenerator.generate_main_code(p)
     
 
     def p_declist_empty(self, p):
         """
         declist :
         """
-        self.codeGenerator.generate_declist_empty_code(p, self.new_temp())
+        self.codeGenerator.generate_declist_empty_code(p)
     
     def p_declist(self, p):
         """
         declist : declist dec
         """
-        self.codeGenerator.generate_declist_code(p, self.new_temp())
+        self.codeGenerator.generate_declist_code(p)
         
 
     def p_dec_vardec(self, p):
         """
         dec : vardec
         """
-        self.codeGenerator.generate_dec_vardec_code(p, self.new_temp())
+        self.codeGenerator.generate_dec_vardec_code(p)
 
     def p_vardec(self, p):
         """
         vardec : idlist COLON type SEMICOLON
         """
-        self.codeGenerator.generate_vardec_code(p, self.new_temp())
+        self.codeGenerator.generate_vardec_code(p)
 
     def p_type(self, p):
         """
@@ -53,36 +53,36 @@ class Parser:
         """
         iddec : ID
         """
-        self.codeGenerator.generate_iddec_ID_code(p, self.new_temp())
+        self.codeGenerator.generate_iddec_ID_code(p)
 
 
     def p_iddec_assign(self, p):
         """
         iddec : ID ASSIGN exp
         """
-        self.codeGenerator.generate_iddec_assign_code(p, self.new_temp())
+        self.codeGenerator.generate_iddec_assign_code(p)
 
     def p_iddec_array(self, p):
         """
         iddec : ID LSB exp RSB
         """
-        self.codeGenerator.generate_iddec_array_code(p, self.new_temp())
+        self.codeGenerator.generate_iddec_array_code(p)
 
     def p_idlist(self, p):
         """
         idlist : iddec
         """
-        self.codeGenerator.generate_idlist_code(p, self.new_temp())
+        self.codeGenerator.generate_idlist_code(p)
 
     def p_idlist_comma(self, p):
         """
         idlist : idlist COMMA iddec
         """
-        self.codeGenerator.generate_idlist_comma_code(p, self.new_temp())
+        self.codeGenerator.generate_idlist_comma_code(p)
 
     def p_exp_assign(self, p):
         "exp : ID ASSIGN exp"
-        self.codeGenerator.generate_exp_assign_code(p, self.new_temp())
+        self.codeGenerator.generate_exp_assign_code(p)
 
     def p_exp_arithmetic(self, p):
         """
@@ -96,11 +96,11 @@ class Parser:
 
     def p_exp_const(self, p):
         "exp : const"
-        self.codeGenerator.generate_exp_const_code(p, self.new_temp())
+        self.codeGenerator.generate_exp_const_code(p)
 
     def p_exp_ID(self, p):
         "exp : ID"
-        self.codeGenerator.generate_exp_ID_code(p, self.new_temp())
+        self.codeGenerator.generate_exp_ID_code(p)
 
     def p_exp_array(self, p):
         "exp : ID LSB exp RSB"
@@ -112,67 +112,67 @@ class Parser:
 
     def p_exp_par(self, p):
         "exp : LRB exp RRB"
-        self.codeGenerator.generate_exp_par_code(p, self.new_temp())
+        self.codeGenerator.generate_exp_par_code(p)
 
     def p_const_arithmetic(self, p):
         """
         const : FLOATNUMBER
         const : INTEGERNUMBER
         """
-        self.codeGenerator.generate_const_arithmetic_code(p, self.new_temp())
+        self.codeGenerator.generate_const_arithmetic_code(p)
 
 
     def p_explist(self, p):
         """
         explist : exp
         """
-        self.codeGenerator.generate_explist_code(p, self.new_temp())
+        self.codeGenerator.generate_explist_code(p)
 
     def p_explist_comma(self, p):
         """
         explist : explist COMMA exp
         """
-        self.codeGenerator.generate_explist_comma_code(p, self.new_temp())
+        self.codeGenerator.generate_explist_comma_code(p)
 
     def p_block(self, p):
         """
         block : LCB stmtlist RCB
         """
-        self.codeGenerator.generate_block_code(p, self.new_temp())
+        self.codeGenerator.generate_block_code(p)
 
     def p_stmtlist(self, p):
         """
         stmtlist : stmtlist stmt
         """
-        self.codeGenerator.generate_stmtlist_code(p, self.new_temp())
+        self.codeGenerator.generate_stmtlist_code(p)
 
     def p_stmtlist_empty(self, p):
         "stmtlist :"
-        self.codeGenerator.generate_stmtlist_empty_code(p, self.new_temp())
+        self.codeGenerator.generate_stmtlist_empty_code(p)
 
     def p_stmt_sem(self, p):
         """
         stmt : exp SEMICOLON
         """
-        self.codeGenerator.generate_stmt_sem_code(p, self.new_temp())
+        self.codeGenerator.generate_stmt_sem_code(p)
 
     def p_stmt_block(self, p):
         """
         stmt : block
         """
-        self.codeGenerator.generate_stmt_block_code(p, self.new_temp())
+        self.codeGenerator.generate_stmt_block_code(p)
 
     def p_stmt_var(self, p):
         """
         stmt : vardec
         """
-        self.codeGenerator.generate_stmt_var_code(p, self.new_temp())
+        self.codeGenerator.generate_stmt_var_code(p)
 
     def p_stmt_print(self, p):
         """
         stmt : PRINT LRB ID RRB SEMICOLON
         """
-        self.codeGenerator.generate_stmt_print_code(p, self.new_temp())
+        self.codeGenerator.generate_stmt_print_code(p)
 
     # part 2 ----------------------------------------------------------------------------------------
 
