@@ -42,15 +42,21 @@ class CodeGenerator:
 
     def generate_iddec_array_code(self, p):
         p[0] = NonTerminal()
-        p[0].code = "array[arr_p] =" + p[2].get_value() + ";\n" + "int" + p[1] + "= arr_p;\n" + "arr_p += " + p[2].get_value() + ";\n"
+        p[0].code = "array[arr_p] =" + str(p[3].get_value()) + ";\n" + "int" + p[1] + "= arr_p;\n" + "arr_p += " + str(p[3].get_value()) + ";\n"
 
     def generate_iddec_assign_code(self, p):
         p[0] = NonTerminal()
         p[0].code = 'int ' + p[1] + p[2] + p[3].get_value() + ';\n'
 
-    def generate_exp_assign_code(self, p):
+    def generate_exp_assign_code(self, p, temp):
         p[0] = NonTerminal()
-        p[0].code = p[3].code + p[1] + p[2] + p[3].get_value()
+        p[0].place = temp
+        p[0].code = p[3].code + p[1] + p[2] + p[3].get_value() + '\n' + temp + '=' + p[1] + ';\n'
+
+    def generate_lvalue_code(self, p, temp):
+        p[0] = NonTerminal()
+        p[0].place = temp
+        p[0].code = p[3].code + p[6].code + "array[" + p[1] + " + " + p[3].get_value() + "] = " + p[6].get_value() + ';\n'
 
     def generate_exp_arithmetic_code(self, p, temp):
         p[0] = NonTerminal()
@@ -82,7 +88,7 @@ class CodeGenerator:
 
     def generate_const_arithmetic_code(self, p):
         p[0] = NonTerminal()
-        p[0].value = int(p[1])
+        p[0].value = p[1]
 
     def generate_explist_code(self, p):
         p[0] = NonTerminal()

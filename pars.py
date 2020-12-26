@@ -82,7 +82,7 @@ class Parser:
 
     def p_exp_assign(self, p):
         "exp : ID ASSIGN exp"
-        self.codeGenerator.generate_exp_assign_code(p)
+        self.codeGenerator.generate_exp_assign_code(p, self.new_temp())
 
     def p_exp_arithmetic(self, p):
         """
@@ -105,6 +105,10 @@ class Parser:
     def p_exp_array(self, p):
         "exp : ID LSB exp RSB"
         self.codeGenerator.generate_exp_array_code(p, self.new_temp())
+
+    def p_lvalue(self, p):
+        "exp : ID LSB exp RSB ASSIGN exp"
+        self.codeGenerator.generate_lvalue_code(p, self.new_temp())
 
     def p_exp_sub(self, p):
         "exp : SUB exp"
@@ -264,7 +268,6 @@ class Parser:
     def p_exp(self, p):
 
         """
-        exp : ID LSB exp RSB ASSIGN exp
         exp : exp AND exp
         exp : exp OR exp
         exp : exp GT exp
