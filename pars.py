@@ -104,11 +104,11 @@ class Parser:
 
     def p_exp_array(self, p):
         "exp : ID LSB exp RSB"
-        self.codeGenerator.generate_exp_array_code(p, self.new_temp())
+        self.codeGenerator.generate_exp_array_code(p, self.new_temp(), self.new_temp())
 
     def p_lvalue(self, p):
         "exp : ID LSB exp RSB ASSIGN exp"
-        self.codeGenerator.generate_lvalue_code(p, self.new_temp())
+        self.codeGenerator.generate_lvalue_code(p, self.new_temp(), self.new_temp())
 
     def p_exp_sub(self, p):
         "exp : SUB exp"
