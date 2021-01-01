@@ -8,6 +8,7 @@ class Parser:
 
     def __init__(self):
         self.tempCount = 0
+        self.quad = 0
         self.codeGenerator = CodeGenerator()
     
     # part 1 ----------------------------------------------------------------------------------------
@@ -180,6 +181,82 @@ class Parser:
 
     # part 2 ----------------------------------------------------------------------------------------
 
+    def p_case(self, p):
+        """
+        case : WHERE const COLON stmtlist
+        """
+        print("case : WHERE const COLON stmtlist")
+
+    def p_cases(self, p):
+        """
+        cases : cases case
+        cases :
+        """
+        if len(p) == 3:
+            print('cases : cases case')
+        else:
+            print('cases :')
+
+    def p_stmt(self, p):
+        """
+        stmt : RETURN exp SEMICOLON
+        stmt : WHILE LRB exp RRB stmt
+        stmt : ON LRB exp RRB LCB cases RCB SEMICOLON
+        stmt : FOR LRB exp SEMICOLON exp SEMICOLON exp RRB stmt
+        stmt : FOR LRB ID IN ID RRB stmt
+        stmt : IF LRB exp RRB stmt elseiflist %prec IFREDUCE
+        stmt : IF LRB exp RRB stmt elseiflist ELSE stmt
+        """
+        print("stmt, len:",len(p))
+
+    def p_elseiflist(self, p):
+        """
+        elseiflist : elseiflist ELSEIF LRB exp RRB stmt
+        elseiflist :
+        """
+        if len(p) == 1:
+            print('elseiflist :')
+        else:
+            print('elseiflist : elseiflist ELSEIF LRB exp RRB stmt')
+
+    def p_exp(self, p):
+        """
+        exp : exp GT exp
+        exp : exp LT exp
+        exp : exp NE exp
+        exp : exp EQ exp
+        exp : exp LE exp
+        exp : exp GE exp
+        """
+        pass
+
+    def p_exp_and(self, p):
+        "exp : exp AND exp"
+        self.codeGenerator.generate_exp_and_code(p)
+
+    def p_exp_or(self, p):
+        "exp : exp OR exp"
+        self.codeGenerator.generate_exp_or_code(p)
+
+    def p_exp_not(self, p):
+        "exp : NOT exp"
+        self.codeGenerator.generate_exp_not_code(p)
+
+    def p_const(self, p):
+        """
+        const : TRUE
+        const : FALSE
+        """
+        self.codeGenerator.generate_stmt_const_code(p, self.next_quad())
+
+    # part 3 ----------------------------------------------------------------------------------------
+
+    def p_exp_fun(self, p):
+        """
+        exp : ID LRB explist RRB
+        exp : ID LRB RRB
+        """
+        pass
 
     def p_dec_funcdec(self, p):
         """
@@ -227,67 +304,7 @@ class Parser:
             print('paramdec : ID LSB RSB COLON type')
 
 
-    def p_case(self, p):
-        """
-        case : WHERE const COLON stmtlist
-        """
-        print("case : WHERE const COLON stmtlist")
 
-    def p_cases(self, p):
-        """
-        cases : cases case
-        cases :
-        """
-        if len(p) == 3:
-            print('cases : cases case')
-        else:
-            print('cases :')
-
-    def p_stmt(self, p):
-        """
-        stmt : RETURN exp SEMICOLON
-        stmt : WHILE LRB exp RRB stmt
-        stmt : ON LRB exp RRB LCB cases RCB SEMICOLON
-        stmt : FOR LRB exp SEMICOLON exp SEMICOLON exp RRB stmt
-        stmt : FOR LRB ID IN ID RRB stmt
-        stmt : IF LRB exp RRB stmt elseiflist %prec IFREDUCE
-        stmt : IF LRB exp RRB stmt elseiflist ELSE stmt
-        """
-        print("stmt, len:",len(p))
-
-    def p_elseiflist(self, p):
-        """
-        elseiflist : elseiflist ELSEIF LRB exp RRB stmt
-        elseiflist :
-        """
-        if len(p) == 1:
-            print('elseiflist :')
-        else:
-            print('elseiflist : elseiflist ELSEIF LRB exp RRB stmt')
-
-    def p_exp(self, p):
-
-        """
-        exp : exp AND exp
-        exp : exp OR exp
-        exp : exp GT exp
-        exp : exp LT exp
-        exp : exp NE exp
-        exp : exp EQ exp
-        exp : exp LE exp
-        exp : exp GE exp
-        exp : ID LRB explist RRB
-        exp : ID LRB RRB
-        exp : NOT exp
-        """
-        print("exp , len:", len(p))
-
-    def p_const(self, p):
-        """
-        const : TRUE
-        const : FALSE
-        """
-        print("const : intnumber | floatnumber | True | False ")
 
     precedence = (
 
@@ -306,6 +323,11 @@ class Parser:
     def new_temp(self):
         temp = "T" + str(self.tempCount)
         self.tempCount += 1
+        return temp
+
+    def next_quad(self):
+        temp = 'L' + str(self.quad)
+        self.quad += 1
         return temp
 
     def p_error (self, p):

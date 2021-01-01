@@ -1,10 +1,12 @@
-from nonTerminal import NonTerminal
+from nonTerminal import NonTerminal, LogicalTerminal
 
 
 class CodeGenerator:
 
     def __init__(self):
         self.variables = []
+
+    # part 1 ----------------------------------------------------------------------------------------
 
     def generate_main_code (self, p):
         p[0] = NonTerminal()
@@ -127,5 +129,48 @@ class CodeGenerator:
         p[0] = NonTerminal()
         p[0].code = 'printf("%d\\n", ' + p[3] + ');\n'
 
+    # part 2 ----------------------------------------------------------------------------------------
 
+    def generate_stmt_const_code(self, p, q):
+        p[0] = LogicalTerminal(q)
+        p[0].address = q
+        if p[1] == 'TRUE':
+            p[0].value = True
+            p[0].true_list = [q]
+        else:
+            p[0].value = False
+            p[0].false_list = [q]
+        p[0].code = q + ": goto -;\n"
 
+    def generate_exp_or_code(self, p):
+        p[0] = LogicalTerminal()
+        p[0].address = p[1].address
+        p[0].code = p[1].code + p[2].code
+        p[1].false_list_back_patch(p[2].address)
+        p[0].true_list.extend(p[1].true_list).extend(p[2].true_list)
+        p[0].false_list = p[2].false_list
+
+    def generate_exp_and_code(self, p):
+        p[0] = LogicalTerminal()
+        p[0].address = p[1].address
+        p[0].code = p[1].code + p[2].code
+        p[1].true_list_back_patch(p[2].address)
+        p[0].false_list.extend(p[1].false_list).extend(p[2].false_list)
+        p[0].true_list = p[2].true_list
+
+    def generate_exp_not_code(self, p):
+        p[0] = LogicalTerminal()
+        p[0].address = p[2].address
+        p[0].code = p[2].code
+        p[0].true_list = p[2].false_list
+        p[0].false_list = p[2].true_list
+
+    def generate_exp_code(self, p, q1, q2):
+        p[0] = LogicalTerminal()
+        p[0].address = q1
+        p[0].code = q1 + ": if (" + p[1].get_value() + ' ' + p[2] + ' ' + p[3] + ") goto -;\n"
+        p[0].code += q2 + ": goto -;\n"
+        p[0].true_list = [q1]
+        p[0].false_list = [q2]
+
+    # part 3 ----------------------------------------------------------------------------------------
