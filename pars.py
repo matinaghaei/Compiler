@@ -197,6 +197,10 @@ class Parser:
         else:
             print('cases :')
 
+    def p_stmt_if(self, p):
+        "stmt : IF LRB exp RRB stmt elseiflist %prec IFREDUCE"
+        self.codeGenerator.generate_stmt_if_code(p, self.next_quad(), self.next_quad())
+
     def p_stmt(self, p):
         """
         stmt : RETURN exp SEMICOLON
@@ -204,7 +208,6 @@ class Parser:
         stmt : ON LRB exp RRB LCB cases RCB SEMICOLON
         stmt : FOR LRB exp SEMICOLON exp SEMICOLON exp RRB stmt
         stmt : FOR LRB ID IN ID RRB stmt
-        stmt : IF LRB exp RRB stmt elseiflist %prec IFREDUCE
         stmt : IF LRB exp RRB stmt elseiflist ELSE stmt
         """
         print("stmt, len:",len(p))
@@ -212,12 +215,12 @@ class Parser:
     def p_elseiflist(self, p):
         """
         elseiflist : elseiflist ELSEIF LRB exp RRB stmt
-        elseiflist :
         """
-        if len(p) == 1:
-            print('elseiflist :')
-        else:
-            print('elseiflist : elseiflist ELSEIF LRB exp RRB stmt')
+        pass
+
+    def p_elseiflist_empty(self, p):
+        "elseiflist :"
+        self.codeGenerator.generate_elseiflist_empty_code(p)
 
     def p_exp(self, p):
         """
@@ -228,7 +231,7 @@ class Parser:
         exp : exp LE exp
         exp : exp GE exp
         """
-        pass
+        self.codeGenerator.generate_exp_code(p, self.next_quad(), self.next_quad())
 
     def p_exp_and(self, p):
         "exp : exp AND exp"
