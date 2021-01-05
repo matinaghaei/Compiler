@@ -83,8 +83,8 @@ class CodeGenerator:
         p[0].code = p[2].code + 'int ' + temp + '=' + p[1] + p[2].get_value() + ';\n'
 
     def generate_exp_par_code(self, p):
-        p[0] = NonTerminal()
-        p[0].code = p[2].code
+        p[0] = LogicTerminal()
+        p[0] = p[2]
         p[0].value = p[1] + p[2].get_value() + p[3]
 
     def generate_const_arithmetic_code(self, p):

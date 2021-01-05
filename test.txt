@@ -3,7 +3,7 @@ main()
 {
 
 
-    if(i < 5) {
+    if(n1 < 5 and (n2 > 6 or n3 == 6)) {
         print(i);
         i = i + 1;
     }
