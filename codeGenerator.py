@@ -10,8 +10,7 @@ class CodeGenerator:
 
     def generate_main_code (self, p):
         p[0] = NonTerminal()
-        p[0].code = p[1].code
-        p[0].code += "main()" + p[5].code
+        p[0].code = "#include <stdio.h>\nint array[10000]; \nint arr_p = 0;\n" + p[1].code + "main()\n" + p[5].code
         print(p[0].code)
 
     def generate_declist_empty_code (self, p):
@@ -53,7 +52,7 @@ class CodeGenerator:
     def generate_exp_assign_code(self, p, temp):
         p[0] = NonTerminal()
         p[0].place = temp
-        p[0].code = p[3].code + p[1] + p[2] + p[3].get_value() + ';\n' + 'int ' + temp + '=' + p[1] + ';\n'
+        p[0].code = p[3].code + p[1] + p[2] + p[3].get_value() + ';\n'
 
     def generate_lvalue_code(self, p, temp, temp2):
         p[0] = NonTerminal()
@@ -81,7 +80,7 @@ class CodeGenerator:
     def generate_exp_sub_code(self, p, temp):
         p[0] = NonTerminal()
         p[0].place = temp
-        p[0].code = p[2].code + '\n' + 'int ' + temp + '=' + p[1] + p[2].get_value()
+        p[0].code = p[2].code + 'int ' + temp + '=' + p[1] + p[2].get_value() + ';\n'
 
     def generate_exp_par_code(self, p):
         p[0] = NonTerminal()
@@ -101,12 +100,23 @@ class CodeGenerator:
         p[0].value = p[1].get_value() + p[2] + p[3].get_value()
 
     def generate_block_code(self, p):
-        p[0] = NonTerminal()
-        p[0].code = '{\n' + p[2].code + '}\n'
-
-    def generate_stmtlist_code(self, p):
         p[0] = StatementTerminal()
-        p[0].code = p[1].code + p[2].code
+        p[0] = p[2]
+
+    def generate_stmtlist_code(self, p, q):
+        p[0] = StatementTerminal()
+        if p[2].address:
+            q = p[2].address
+        if p[1].code:
+            p[0].address = p[1].address
+        else:
+            p[0].address = q
+        p[1].next_list_back_patch(q)
+        if p[2].address:
+            p[0].code = p[1].code + p[2].code
+        else:
+            p[0].code = p[1].code + q + ": " + p[2].code
+        p[0].next_list = p[2].next_list
 
     def generate_stmtlist_empty_code(self, p):
         p[0] = StatementTerminal()
@@ -114,11 +124,11 @@ class CodeGenerator:
 
     def generate_stmt_sem_code(self, p):
         p[0] = StatementTerminal()
-        p[0].code = p[1].code + '\n'
+        p[0].code = p[1].code
 
     def generate_stmt_block_code(self, p):
         p[0] = StatementTerminal()
-        p[0].code = p[1].code
+        p[0] = p[1]
 
     def generate_stmt_var_code(self, p):
         p[0] = StatementTerminal()
@@ -165,7 +175,10 @@ class CodeGenerator:
         p[0].true_list = p[2].false_list
         p[0].false_list = p[2].true_list
 
-    def generate_exp_code(self, p, q1, q2):
+    def generate_exp_relop_code(self, p):
+        p[0] = p[1]
+
+    def generate_relopexp_code(self, p, q1, q2):
         p[0] = LogicTerminal()
         p[0].address = q1
         p[0].code += p[1].code + p[3].code
@@ -173,6 +186,25 @@ class CodeGenerator:
         p[0].code += q2 + ": goto -;\n"
         p[0].true_list = [q1]
         p[0].false_list = [q2]
+        p[0].right_most_exp = p[3]
+
+    def generate_relopexp_rel_code(self, p, q1, q2):
+        temp_terminal = LogicTerminal()
+        temp_terminal.address = q1
+        temp_terminal.code = p[1].right_most_exp.code + p[3].code
+        temp_terminal.code += q1 + ": if (" + p[1].right_most_exp.get_value() + ' ' + p[2] + ' ' + p[3].get_value() + ") goto -;\n"
+        temp_terminal.code += q2 + ": goto -;\n"
+        temp_terminal.true_list = [q1]
+        temp_terminal.false_list = [q2]
+
+        p[0] = LogicTerminal()
+        p[0].address = p[1].address
+        p[1].true_list_back_patch(temp_terminal.address)
+        p[0].code = p[1].code + temp_terminal.code
+        p[0].false_list = p[1]
+        p[0].false_list = p[1].false_list + temp_terminal.false_list
+        p[0].true_list = temp_terminal.true_list
+        p[0].right_most_exp = p[3]
 
     def generate_elseiflist_empty_code(self, p):
         p[0] = LogicTerminal()
@@ -186,10 +218,48 @@ class CodeGenerator:
 
     def generate_stmt_if_code(self, p, q1, q2):
         p[0] = StatementTerminal()
+        p[0].address = p[3].address
+        if p[5].address:
+            q1 = p[5].address
         p[3].true_list_back_patch(q1)
-        p[3].false_list_back_patch(q2)
-        p[0].code = p[3].code + q1 + ": " + p[5].code + q2 + ": " + p[6].code
-        p[0].next_list = p[5].next_list + p[6].false_list + p[6].true_list
+        if p[6].code:
+            if p[6].address:
+                q2 = p[6].address
+            p[3].false_list_back_patch(q2)
+            if p[6].address:
+                p[0].code = p[3].code + p[6].code
+            else:
+                p[0].code = p[3].code + q2 + ": " + p[6].code
+            p[0].next_list = p[5].next_list + p[6].false_list + p[6].true_list
+        else:
+            p[0].code = p[3].code
+            p[0].next_list = p[3].false_list + p[5].next_list + p[6].false_list + p[6].true_list
+        if p[5].address:
+            p[0].code += p[5].code
+        else:
+            p[0].code += q1 + ": " + p[5].code
+
+    def generate_while_code(self, p, q1, q2):
+        p[0] = StatementTerminal()
+        if p[3].address:
+            q1 = p[3].address
+        p[0].address = q1
+        if p[5].address:
+            q2 = p[5].address
+        p[5].next_list_back_patch(q1)
+        p[3].true_list_back_patch(q2)
+        if p[3].address:
+            p[0].code = p[3].code
+        else:
+            p[0].code = q1 + ": " + p[3].code
+        if p[5].address:
+            p[0].code += p[5].code
+        else:
+            p[0].code += q2 + ": " + p[5].code
+        p[0].code += "goto " + q1 + ";\n"
+        p[0].next_list = p[3].false_list
+
+
 
 
     # part 3 ----------------------------------------------------------------------------------------

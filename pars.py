@@ -149,7 +149,7 @@ class Parser:
         """
         stmtlist : stmtlist stmt
         """
-        self.codeGenerator.generate_stmtlist_code(p)
+        self.codeGenerator.generate_stmtlist_code(p, self.next_quad())
 
     def p_stmtlist_empty(self, p):
         "stmtlist :"
@@ -201,10 +201,12 @@ class Parser:
         "stmt : IF LRB exp RRB stmt elseiflist %prec IFREDUCE"
         self.codeGenerator.generate_stmt_if_code(p, self.next_quad(), self.next_quad())
 
-    def p_stmt(self, p):
+    def p_while(self, p):
+        "stmt : WHILE LRB exp RRB stmt"
+        self.codeGenerator.generate_while_code(p, self.next_quad(), self.next_quad())
+
+    def p_stmt_control(self, p):
         """
-        stmt : RETURN exp SEMICOLON
-        stmt : WHILE LRB exp RRB stmt
         stmt : ON LRB exp RRB LCB cases RCB SEMICOLON
         stmt : FOR LRB exp SEMICOLON exp SEMICOLON exp RRB stmt
         stmt : FOR LRB ID IN ID RRB stmt
@@ -222,16 +224,31 @@ class Parser:
         "elseiflist :"
         self.codeGenerator.generate_elseiflist_empty_code(p)
 
-    def p_exp(self, p):
+    def p_exp_relop(self, p):
+        "exp : relopexp %prec EXP"
+        self.codeGenerator.generate_exp_relop_code(p)
+
+    def p_relopexp(self, p):
         """
-        exp : exp GT exp
-        exp : exp LT exp
-        exp : exp NE exp
-        exp : exp EQ exp
-        exp : exp LE exp
-        exp : exp GE exp
+        relopexp : exp GT exp
+        relopexp : exp LT exp
+        relopexp : exp NE exp
+        relopexp : exp EQ exp
+        relopexp : exp LE exp
+        relopexp : exp GE exp
         """
-        self.codeGenerator.generate_exp_code(p, self.next_quad(), self.next_quad())
+        self.codeGenerator.generate_relopexp_code(p, self.next_quad(), self.next_quad())
+
+    def p_relopexp_rel(self, p):
+        """
+        relopexp : relopexp GT exp
+        relopexp : relopexp LT exp
+        relopexp : relopexp NE exp
+        relopexp : relopexp EQ exp
+        relopexp : relopexp LE exp
+        relopexp : relopexp GE exp
+        """
+        self.codeGenerator.generate_relopexp_rel_code(p, self.next_quad(), self.next_quad())
 
     def p_exp_and(self, p):
         "exp : exp AND exp"
@@ -306,14 +323,17 @@ class Parser:
         else:
             print('paramdec : ID LSB RSB COLON type')
 
-
-
+    def p_stmt(self, p):
+        """
+        stmt : RETURN exp SEMICOLON
+        """
+        print("stmt, len:",len(p))
 
     precedence = (
-
         ('left', "OR"),
         ('left', "AND"),
         ('left', "NOT"),
+        ('left', 'EXP'),
         ('left', "GT", "LT", "NE", "EQ", "LE", "GE"),
         ('right', "ASSIGN"),
         ('left', "MOD"),

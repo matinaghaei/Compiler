@@ -18,6 +18,7 @@ class LogicTerminal(NonTerminal):
         self.true_list = []
         self.false_list = []
         self.address = ""
+        self.right_most_exp = ""
 
     def true_list_back_patch(self, label):
         lines = self.code.split('\n')
