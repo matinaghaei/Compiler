@@ -1,15 +1,6 @@
-n1,n2,n3,i:int;
+n1 = 1,n2,n3,i:int;
 main()
 {
-    i = 1;
-    on(i)
-    {
-        where 0:
-            i = i + 37;
-        where 1:
-            i = i + 32;
-        where 2:
-            i = i + 40;
-    };
-    print(i);
+    while(True)
+        print(n1);
 }

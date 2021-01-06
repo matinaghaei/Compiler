@@ -73,8 +73,7 @@ class CodeGenerator:
         p[0].code = p[1].code + p[3].code + temp + '=' + p[1].get_value() + p[2] + p[3].get_value() + ";\n"
 
     def generate_exp_const_code(self, p):
-        p[0] = NonTerminal()
-        p[0].value = p[1].get_value()
+        p[0] = p[1]
 
     def generate_exp_ID_code(self, p):
         p[0] = NonTerminal()
@@ -152,13 +151,11 @@ class CodeGenerator:
     # part 2 ----------------------------------------------------------------------------------------
 
     def generate_stmt_const_code(self, p, q):
-        p[0] = StatementTerminal()
+        p[0] = LogicTerminal()
         p[0].address = q
-        if p[1] == 'TRUE':
-            p[0].value = 1
+        if p[1] == 'True':
             p[0].true_list = [q]
         else:
-            p[0].value = 0
             p[0].false_list = [q]
         p[0].code = q + ": goto -;\n"
 
