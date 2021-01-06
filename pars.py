@@ -207,7 +207,7 @@ class Parser:
 
     def p_stmt_if_else(self, p):
         "stmt : IF LRB exp RRB stmt elseiflist ELSE stmt"
-        pass
+        self.codeGenerator.generate_stmt_if_else_code(p, self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad())
 
     def p_stmt_control(self, p):
         """
@@ -221,7 +221,7 @@ class Parser:
         """
         elseiflist : elseiflist ELSEIF LRB exp RRB stmt
         """
-        self.codeGenerator.generate_elseiflist_code(p, self.next_quad())
+        self.codeGenerator.generate_elseiflist_code(p, self.next_quad(), self.next_quad(), self.next_quad())
 
     def p_elseiflist_empty(self, p):
         "elseiflist :"

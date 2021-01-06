@@ -1,4 +1,4 @@
-n1 = 10,n2 = 7,n3,n4:int;
+n1 = 10,n2 = 7,n3 = 50,n4 = 100:int;
 main()
 {
 
@@ -6,9 +6,12 @@ main()
     if(n1 < 5) {
         print(n1);
     }
-    elseif(n2 > 6) {
+    elseif(n2 > 10)
         print(n2);
-    }
+    elseif(n2 > 4)
+        print(n3);
+    else
+        print(n4);
 
     print(n1);
 }

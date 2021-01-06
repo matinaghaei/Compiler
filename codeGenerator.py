@@ -208,20 +208,29 @@ class CodeGenerator:
     def generate_elseiflist_empty_code(self, p):
         p[0] = LogicTerminal()
 
-    def generate_elseiflist_code(self, p, q):
+    def generate_elseiflist_code(self, p, q1, q2, q3):
         p[0] = LogicTerminal()
+        if p[4].address:
+            q2 = p[4].address
+        p[1].false_list_back_patch(q2)
         if p[1].code:
             p[0].address = p[1].address
+            p[0].code = p[1].code + q1 + ": goto -;\n"
         else:
             p[0].address = p[4].address
+            p[0].code = ""
         if p[6].address:
-            q = p[6].address
-        p[4].true_list_back_patch(q)
-        if p[6].address:
-            p[0].code = p[1].code + p[4].code + p[6].code
+            q3 = p[6].address
+        p[4].true_list_back_patch(q3)
+        if p[4].address:
+            p[0].code += p[4].code
         else:
-            p[0].code = p[1].code + p[4].code + q + ": " + p[6].code
-        p[0].true_list = p[1].true_list + p[6].next_list
+            p[0].code += q2 + ": goto -;\n" + p[4].code
+        if p[6].address:
+            p[0].code += p[6].code
+        else:
+            p[0].code += q3 + ": " + p[6].code
+        p[0].true_list = p[1].true_list + p[6].next_list + [q1]
         p[0].false_list = p[1].false_list + p[4].false_list
 
     def generate_stmt_if_code(self, p, q1, q2, q3):
@@ -251,31 +260,39 @@ class CodeGenerator:
             else:
                 p[0].code += q1 + ": " + p[5].code
 
-    def generate_stmt_if_else_code(self, p, q1, q2, q3):
-        p[6].false_list_back_patch(q3)
+    def generate_stmt_if_else_code(self, p, q1, q2, q3, q4, q5):
         p[0] = StatementTerminal()
         p[0].address = p[3].address
         if p[5].address:
             q1 = p[5].address
         p[3].true_list_back_patch(q1)
+        if p[8].address:
+            q5 = p[8].address
+        p[6].false_list_back_patch(q5)
         if p[6].code:
             if p[6].address:
                 q2 = p[6].address
             p[3].false_list_back_patch(q2)
-            if p[6].address:
-                p[0].code = p[3].code + p[6].code
+            if p[5].address:
+                p[0].code += p[3].code + p[5].code + q3 + ": goto -;\n"
             else:
-                p[0].code = p[3].code + q2 + ": " + p[6].code
-            p[0].next_list = p[5].next_list + p[6].false_list + p[6].true_list
+                p[0].code += p[3].code + q1 + ": " + p[5].code + q3 + ": goto -;\n"
+            if p[6].address:
+                p[0].code += p[6].code
+            else:
+                p[0].code += q2 + ": " + p[6].code
+            p[0].next_list = p[5].next_list + p[6].false_list + p[6].true_list + [q3, q4]
         else:
             p[0].code = p[3].code
-            p[0].next_list = p[3].false_list + p[5].next_list + p[6].true_list + p[8].next_list
-        if p[5].address:
-            p[0].code += p[5].code
+            p[0].next_list = p[3].false_list + p[5].next_list + [q4]
+            if p[5].address:
+                p[0].code += p[5].code
+            else:
+                p[0].code += q1 + ": " + p[5].code
+        if p[8].address:
+            p[0].code += q4 + ": goto -;\n" + p[8].code
         else:
-            p[0].code += q1 + ": " + p[5].code
-        p[0].code += q3 + ": " + p[8].code
-
+            p[0].code += q4 + ": goto -;\n" + q5 + ": " + p[8].code
 
     def generate_stmt_while_code(self, p, q1, q2):
         p[0] = StatementTerminal()
