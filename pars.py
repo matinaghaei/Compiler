@@ -67,7 +67,7 @@ class Parser:
         """
         iddec : ID LSB exp RSB
         """
-        self.codeGenerator.generate_iddec_array_code(p)
+        self.codeGenerator.generate_iddec_array_code(p, self.new_temp())
 
     def p_idlist(self, p):
         """
@@ -105,11 +105,11 @@ class Parser:
 
     def p_exp_array(self, p):
         "exp : ID LSB exp RSB"
-        self.codeGenerator.generate_exp_array_code(p, self.new_temp(), self.new_temp())
+        self.codeGenerator.generate_exp_array_code(p, self.new_temp(), self.new_temp(), self.new_temp())
 
     def p_lvalue(self, p):
         "exp : ID LSB exp RSB ASSIGN exp"
-        self.codeGenerator.generate_lvalue_code(p, self.new_temp(), self.new_temp())
+        self.codeGenerator.generate_lvalue_code(p, self.new_temp(), self.new_temp(), self.new_temp())
 
     def p_exp_sub(self, p):
         "exp : SUB exp"
@@ -213,11 +213,13 @@ class Parser:
         "stmt : FOR LRB exp SEMICOLON exp SEMICOLON exp RRB stmt"
         self.codeGenerator.generate_stmt_for_code(p, self.next_quad(), self.next_quad())
 
+    def p_stmt_foreach(self, p):
+        "stmt : FOR LRB ID IN ID RRB stmt"
+        self.codeGenerator.generate_stmt_foreach_code(p, self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad(), self.new_temp(), self.new_temp(), self.new_temp(), self.new_temp())
+
     def p_stmt_control(self, p):
         """
         stmt : ON LRB exp RRB LCB cases RCB SEMICOLON
-
-        stmt : FOR LRB ID IN ID RRB stmt
         """
         print("stmt, len:",len(p))
 

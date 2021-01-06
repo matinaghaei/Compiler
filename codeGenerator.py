@@ -10,7 +10,7 @@ class CodeGenerator:
 
     def generate_main_code (self, p):
         p[0] = NonTerminal()
-        p[0].code = "#include <stdio.h>\nint array[10000]; \nint arr_p = 0;\n" + self.variables + "main()\n{\n" + p[5].code + "}"
+        p[0].code = "#include <stdio.h>\nint array[10000]; \nint arr_p = 0;\n" + self.variables + "main()\n{\n" + p[1].code + p[5].code + "}"
         print(p[0].code)
 
     def generate_declist_empty_code (self, p):
@@ -41,10 +41,11 @@ class CodeGenerator:
         p[0] = NonTerminal()
         p[0].code = p[1].code
 
-    def generate_iddec_array_code(self, p):
+    def generate_iddec_array_code(self, p, temp):
         p[0] = NonTerminal()
         self.variables += "int " + p[1] + ";\n"
-        p[0].code = p[1] + "= arr_p;\n" + "arr_p += " + p[3].get_value() + ";\n"
+        self.variables += "int " + temp + ";\n"
+        p[0].code = p[1] + "= arr_p;\n" + "array[arr_p] = " + p[3].get_value() + ";\n" + temp + " = " + p[3].get_value() + " + 1;\narr_p  = arr_p + " + temp + ";\n"
 
     def generate_iddec_assign_code(self, p):
         p[0] = NonTerminal()
@@ -57,12 +58,13 @@ class CodeGenerator:
         p[0].place = p[1]
         p[0].code = p[3].code + p[1] + p[2] + p[3].get_value() + ';\n'
 
-    def generate_lvalue_code(self, p, temp, temp2):
+    def generate_lvalue_code(self, p, temp, temp2, temp3):
         p[0] = NonTerminal()
         p[0].place = temp
         self.variables += 'int ' + temp + ';\n'
         self.variables += 'int ' + temp2 + ';\n'
-        p[0].code = temp2 + ' = ' + p[1] + " + " + p[3].get_value() + ';\n' + p[3].code + p[6].code + "array[" + temp2 + "] = " + p[6].get_value() + ';\n' + temp + ' = ' + "array[" + temp2 + "];\n"
+        self.variables += 'int ' + temp3 + ';\n'
+        p[0].code = p[3].code + temp2 + ' = ' + p[3].get_value() + ' + 1;\n' + temp3 + ' = ' + p[1] + ' + ' + temp2 + ';\n' + p[6].code + "array[" + temp3 + "] = " + p[6].get_value() + ';\n' + temp + ' = ' + "array[" + temp3 + "];\n"
 
     def generate_exp_arithmetic_code(self, p, temp):
         p[0] = NonTerminal()
@@ -78,12 +80,13 @@ class CodeGenerator:
         p[0] = NonTerminal()
         p[0].value = p[1]
 
-    def generate_exp_array_code(self, p, temp, temp2):
+    def generate_exp_array_code(self, p, temp, temp2, temp3):
         p[0] = NonTerminal()
         p[0].place = temp
         self.variables += 'int ' + temp + ';\n'
         self.variables += 'int ' + temp2 + ';\n'
-        p[0].code = p[3].code + temp2 + ' = ' + p[1] + "+" + p[3].get_value() + ';\n' + temp + '=' + "array[" + p[1] + "+" + p[3].get_value() + "];\n"
+        self.variables += 'int ' + temp3 + ';\n'
+        p[0].code = p[3].code + temp2 + ' = ' + p[3].get_value() + ' + 1;\n' + temp3 + ' = ' + p[1] + " + " + temp2 + ';\n' + temp + '=' + "array[" + temp3 + "];\n"
 
     def generate_exp_sub_code(self, p, temp):
         p[0] = NonTerminal()
@@ -344,5 +347,34 @@ class CodeGenerator:
         p[0].code += p[7].code + "goto " + q1 + ";\n"
         p[0].next_list = p[5].false_list
 
+    def generate_stmt_foreach_code(self, p, q1, q2, q3, q4, temp, temp2, temp3, temp4):
+        self.variables += 'int ' + p[3] + ';\n'
+        self.variables += 'int ' + temp + ';\n'
+        self.variables += 'int ' + temp2 + ';\n'
+        self.variables += 'int ' + temp3 + ';\n'
+        self.variables += 'int ' + temp4 + ';\n'
+
+        iteration_exp = LogicTerminal()
+        iteration_exp.address = q3
+        iteration_exp.code += q3 + ": if (" + temp2 + ' < ' + temp4 + ") goto -;\n"
+        iteration_exp.code += q4 + ": goto -;\n"
+        iteration_exp.true_list = [q3]
+        iteration_exp.false_list = [q4]
+
+        p[0] = StatementTerminal()
+        p[0].code = temp + ' = ' + p[5] + ';\n' + temp3 + ' = array[' + temp + '];\n' + temp2 + ' = ' + temp + ' + 1;\n' + temp4 + ' = ' + temp2 + ' + ' + temp3 + ';\n'
+        if iteration_exp.address:
+            q1 = iteration_exp.address
+        p[0].address = q1
+        p[7].next_list_back_patch(q1)
+        iteration_exp.true_list_back_patch(q2)
+        if iteration_exp.address:
+            p[0].code += iteration_exp.code
+        else:
+            p[0].code += q1 + ": " + iteration_exp.code
+        p[0].code += p[3] + ' = array[' + temp2 + '];\n'
+        p[0].code += q2 + ": " + p[3] + ' = array[' + temp2 + '];\n' + p[7].code
+        p[0].code += temp2 + " = " + temp2 + " + 1;\ngoto " + q1 + ";\n"
+        p[0].next_list = iteration_exp.false_list
 
     # part 3 ----------------------------------------------------------------------------------------
