@@ -83,7 +83,7 @@ class Parser:
 
     def p_exp_assign(self, p):
         "exp : ID ASSIGN exp"
-        self.codeGenerator.generate_exp_assign_code(p, self.new_temp())
+        self.codeGenerator.generate_exp_assign_code(p)
 
     def p_exp_arithmetic(self, p):
         """
@@ -209,10 +209,14 @@ class Parser:
         "stmt : IF LRB exp RRB stmt elseiflist ELSE stmt"
         self.codeGenerator.generate_stmt_if_else_code(p, self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad())
 
+    def p_stmt_for(self, p):
+        "stmt : FOR LRB exp SEMICOLON exp SEMICOLON exp RRB stmt"
+        self.codeGenerator.generate_stmt_for_code(p, self.next_quad(), self.next_quad())
+
     def p_stmt_control(self, p):
         """
         stmt : ON LRB exp RRB LCB cases RCB SEMICOLON
-        stmt : FOR LRB exp SEMICOLON exp SEMICOLON exp RRB stmt
+
         stmt : FOR LRB ID IN ID RRB stmt
         """
         print("stmt, len:",len(p))
