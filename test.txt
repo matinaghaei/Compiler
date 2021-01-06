@@ -1,11 +1,13 @@
-n1,n2,n3,n4:int;
+n1 = 10,n2 = 7,n3,n4:int;
 main()
 {
 
 
-    if(n1 < 5 and (n2 > 6 or n3 == 6)) {
-        print(i);
-        i = i + 1;
+    if(n1 < 5) {
+        print(n1);
+    }
+    elseif(n2 > 6) {
+        print(n2);
     }
 
     print(n1);
