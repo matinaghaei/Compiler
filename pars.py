@@ -181,22 +181,6 @@ class Parser:
 
     # part 2 ----------------------------------------------------------------------------------------
 
-    def p_case(self, p):
-        """
-        case : WHERE const COLON stmtlist
-        """
-        print("case : WHERE const COLON stmtlist")
-
-    def p_cases(self, p):
-        """
-        cases : cases case
-        cases :
-        """
-        if len(p) == 3:
-            print('cases : cases case')
-        else:
-            print('cases :')
-
     def p_stmt_if(self, p):
         "stmt : IF LRB exp RRB stmt elseiflist %prec IFREDUCE"
         self.codeGenerator.generate_stmt_if_code(p, self.next_quad(), self.next_quad(), self.next_quad())
@@ -217,11 +201,23 @@ class Parser:
         "stmt : FOR LRB ID IN ID RRB stmt"
         self.codeGenerator.generate_stmt_foreach_code(p, self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad(), self.new_temp(), self.new_temp(), self.new_temp(), self.new_temp())
 
-    def p_stmt_control(self, p):
+    def p_stmt_case(self, p):
+        "stmt : ON LRB exp RRB LCB cases RCB SEMICOLON"
+        self.codeGenerator.generate_stmt_case_code(p)
+
+    def p_case(self, p):
         """
-        stmt : ON LRB exp RRB LCB cases RCB SEMICOLON
+        case : WHERE const COLON stmtlist
         """
-        print("stmt, len:",len(p))
+        self.codeGenerator.generate_case_code(p, self.next_quad(), self.next_quad(), self.next_quad())
+
+    def p_cases(self, p):
+        "cases : cases case"
+        self.codeGenerator.generate_cases_code(p, self.next_quad(), self.next_quad())
+
+    def p_cases_empty(self, p):
+        "cases :"
+        self.codeGenerator.generate_cases_empty_code(p)
 
     def p_elseiflist(self, p):
         """

@@ -243,7 +243,7 @@ class CodeGenerator:
         else:
             p[0].code += q3 + ": " + p[6].code
         p[0].true_list = p[1].true_list + p[6].next_list + [q1]
-        p[0].false_list = p[1].false_list + p[4].false_list
+        p[0].false_list = p[4].false_list
 
     def generate_stmt_if_code(self, p, q1, q2, q3):
         p[0] = StatementTerminal()
@@ -376,5 +376,53 @@ class CodeGenerator:
         p[0].code += q2 + ": " + p[3] + ' = array[' + temp2 + '];\n' + p[7].code
         p[0].code += temp2 + " = " + temp2 + " + 1;\ngoto " + q1 + ";\n"
         p[0].next_list = iteration_exp.false_list
+
+    def generate_cases_empty_code(self, p):
+        p[0] = LogicTerminal()
+
+    def generate_cases_code(self, p, q1, q2):
+        p[0] = LogicTerminal()
+        if p[2].address:
+            q2 = p[2].address
+        p[1].false_list_back_patch(q2)
+        if p[1].code:
+            p[0].address = p[1].address
+            p[0].code = p[1].code + q1 + ": goto -;\n"
+        else:
+            p[0].address = p[2].address
+            p[0].code = ""
+        if p[2].address:
+            p[0].code += p[2].code
+        else:
+            p[0].code += q2 + ': ' + p[2].code
+        p[0].true_list = p[1].true_list + [q1]
+        p[0].false_list = p[2].false_list
+
+    def generate_case_code(self, p, q1, q2, q3):
+        logical_exp = LogicTerminal()
+        logical_exp.address = q1
+        logical_exp.code += q1 + ": if (" + p[2].get_value() + " == $) goto -;\n"
+        logical_exp.code += q2 + ": goto -;\n"
+        logical_exp.true_list = [q1]
+        logical_exp.false_list = [q2]
+
+        p[0] = LogicTerminal()
+        if p[4].address:
+            q3 = p[4].address
+        logical_exp.true_list_back_patch(q3)
+        p[0].code = logical_exp.code
+        if p[4].address:
+            p[0].code += p[4].code
+        else:
+            p[0].code += q3 + ': ' + p[4].code
+        p[0].false_list = logical_exp.false_list
+
+    def generate_stmt_case_code(self, p):
+        p[0] = StatementTerminal()
+        p[0].address = p[6].address
+        p[0].code = p[3].code
+        p[0].code += p[6].code.replace('$', p[3].get_value())
+        p[0].next_list = p[6].true_list + p[6].false_list
+
 
     # part 3 ----------------------------------------------------------------------------------------

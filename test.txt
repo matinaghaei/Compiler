@@ -1,16 +1,15 @@
+n1,n2,n3,i:int;
 main()
 {
-    n : int;
-    a[5] : int;
-    a[0] = 1;
-    a[1] = 2;
-    a[2] = 3;
-    a[3] = 4;
-    a[4] = 5;
-
-    for(item in a)
-        print(item);
-
-    print(n);
-
+    i = 1;
+    on(i)
+    {
+        where 0:
+            i = i + 37;
+        where 1:
+            i = i + 32;
+        where 2:
+            i = i + 40;
+    };
+    print(i);
 }
