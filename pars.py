@@ -61,7 +61,7 @@ class Parser:
         """
         iddec : ID ASSIGN exp
         """
-        self.codeGenerator.generate_iddec_assign_code(p)
+        self.codeGenerator.generate_iddec_assign_code(p, self.next_quad(), self.next_quad(), self.next_quad())
 
     def p_iddec_array(self, p):
         """
@@ -83,7 +83,7 @@ class Parser:
 
     def p_exp_assign(self, p):
         "exp : ID ASSIGN exp"
-        self.codeGenerator.generate_exp_assign_code(p)
+        self.codeGenerator.generate_exp_assign_code(p, self.next_quad(), self.next_quad(), self.next_quad())
 
     def p_exp_arithmetic(self, p):
         """
@@ -109,7 +109,7 @@ class Parser:
 
     def p_lvalue(self, p):
         "exp : ID LSB exp RSB ASSIGN exp"
-        self.codeGenerator.generate_lvalue_code(p, self.new_temp(), self.new_temp(), self.new_temp())
+        self.codeGenerator.generate_lvalue_code(p, self.new_temp(), self.new_temp(), self.new_temp(), self.next_quad(), self.next_quad(), self.next_quad())
 
     def p_exp_sub(self, p):
         "exp : SUB exp"
@@ -339,8 +339,8 @@ class Parser:
         ('left', "AND"),
         ('left', "NOT"),
         ('left', 'EXP'),
-        ('left', "GT", "LT", "NE", "EQ", "LE", "GE"),
         ('right', "ASSIGN"),
+        ('left', "GT", "LT", "NE", "EQ", "LE", "GE"),
         ('left', "MOD"),
         ('left', "SUM", "SUB"),
         ('left', "MUL", "DIV"),

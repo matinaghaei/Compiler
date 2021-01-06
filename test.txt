@@ -1,6 +1,8 @@
-n1 = 1,n2,n3,i:int;
+n1 = 1,n3,i:int;
 main()
 {
-    while(True)
-        print(n1);
+    a[5] : int;
+    a[1] = 1 < 2;
+    n1 = a[1];
+    print(n1);
 }

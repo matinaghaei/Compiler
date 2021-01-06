@@ -47,24 +47,47 @@ class CodeGenerator:
         self.variables += "int " + temp + ";\n"
         p[0].code = p[1] + "= arr_p;\n" + "array[arr_p] = " + p[3].get_value() + ";\n" + temp + " = " + p[3].get_value() + " + 1;\narr_p  = arr_p + " + temp + ";\n"
 
-    def generate_iddec_assign_code(self, p):
-        p[0] = NonTerminal()
-        p[0].code += p[3].code
+    def generate_iddec_assign_code(self, p, q1, q2, q3):
+        p[0] = StatementTerminal()
         self.variables += "int " + p[1] + ";\n"
-        p[0].code += p[1] + p[2] + p[3].get_value() + ';\n'
+        if isinstance(p[3], LogicTerminal):
+            p[0].address = p[3].address
+            p[3].true_list_back_patch(q1)
+            p[3].false_list_back_patch(q2)
+            p[0].code = p[3].code + q1 + ': ' + p[1] + ' = ' + '1;\n' + q3 + ': goto -;\n' + q2 + ': ' + p[1] + ' = ' + '0;\n'
+            p[0].next_list = [q3]
+        else:
+            p[0].code = p[3].code + p[1] + ' = ' + p[3].get_value() + ';\n'
 
-    def generate_exp_assign_code(self, p):
-        p[0] = NonTerminal()
+    def generate_exp_assign_code(self, p, q1, q2, q3):
+        p[0] = StatementTerminal()
         p[0].place = p[1]
-        p[0].code = p[3].code + p[1] + p[2] + p[3].get_value() + ';\n'
+        if isinstance(p[3], LogicTerminal):
+            p[0].address = p[3].address
+            p[3].true_list_back_patch(q1)
+            p[3].false_list_back_patch(q2)
+            p[0].code = p[3].code + q1 + ': ' + p[1] + ' = ' + '1;\n' + q3 + ': goto -;\n' + q2 + ': ' + p[1] + ' = ' + '0;\n'
+            p[0].next_list = [q3]
+        else:
+            p[0].code = p[3].code + p[1] + ' = ' + p[3].get_value() + ';\n'
 
-    def generate_lvalue_code(self, p, temp, temp2, temp3):
-        p[0] = NonTerminal()
+    def generate_lvalue_code(self, p, temp, temp2, temp3, q1, q2, q3):
+        p[0] = StatementTerminal()
+        if isinstance(p[3], LogicTerminal):
+            p[0].address = p[3].address
         p[0].place = temp
+        p[0].code = p[3].code + temp2 + ' = ' + p[3].get_value() + ' + 1;\n' + temp3 + ' = ' + p[1] + ' + ' + temp2 + ';\n'
         self.variables += 'int ' + temp + ';\n'
         self.variables += 'int ' + temp2 + ';\n'
         self.variables += 'int ' + temp3 + ';\n'
-        p[0].code = p[3].code + temp2 + ' = ' + p[3].get_value() + ' + 1;\n' + temp3 + ' = ' + p[1] + ' + ' + temp2 + ';\n' + p[6].code + "array[" + temp3 + "] = " + p[6].get_value() + ';\n' + temp + ' = ' + "array[" + temp3 + "];\n"
+        if isinstance(p[6], LogicTerminal):
+            p[6].true_list_back_patch(q1)
+            p[6].false_list_back_patch(q2)
+            p[0].code += p[6].code + q1 + ": array[" + temp3 + "] = 1;\n" + q3 + ': goto -;\n' + q2 + ": array[" + temp3 + "] = 0;\n"
+            p[0].next_list = [q3]
+        else:
+            p[0].code += p[6].code + "array[" + temp3 + "] = " + p[6].get_value() + ';\n'
+        p[0].code += temp + ' = ' + "array[" + temp3 + "];\n"
 
     def generate_exp_arithmetic_code(self, p, temp):
         p[0] = NonTerminal()
@@ -134,8 +157,11 @@ class CodeGenerator:
         p[0].code = ""
 
     def generate_stmt_sem_code(self, p):
-        p[0] = StatementTerminal()
-        p[0].code = p[1].code
+        if isinstance(p[1], StatementTerminal):
+            p[0] = p[1]
+        else:
+            p[0] = StatementTerminal()
+            p[0].code = p[1].code
 
     def generate_stmt_block_code(self, p):
         p[0] = p[1]
