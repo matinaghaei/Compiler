@@ -58,7 +58,7 @@ class CodeGenerator:
         p[0] = StatementTerminal()
         self.variables += "int " + p[1] + ";\n"
         self.variables += "int " + temp + ";\n"
-        p[0].code = p[1] + "= arr_p;\n" + "array[arr_p] = " + p[3].get_value() + ";\n" + temp + " = " + p[3].get_value() + " + 1;\narr_p  = arr_p + " + temp + ";\n"
+        p[0].code = p[1] + " = arr_p;\n" + "array[arr_p] = " + p[3].get_value() + ";\n" + temp + " = " + p[3].get_value() + " + 1;\narr_p  = arr_p + " + temp + ";\n"
 
     def generate_iddec_assign_code(self, p, q1, q2, q3):
         p[0] = StatementTerminal()
@@ -106,7 +106,7 @@ class CodeGenerator:
         p[0] = NonTerminal()
         p[0].place = temp
         self.variables += 'int ' + temp + ';\n'
-        p[0].code = p[1].code + p[3].code + temp + '=' + p[1].get_value() + p[2] + p[3].get_value() + ";\n"
+        p[0].code = p[1].code + p[3].code + temp + ' = ' + p[1].get_value() + ' ' + p[2] + ' ' + p[3].get_value() + ";\n"
 
     def generate_exp_const_code(self, p):
         p[0] = p[1]
@@ -121,13 +121,13 @@ class CodeGenerator:
         self.variables += 'int ' + temp + ';\n'
         self.variables += 'int ' + temp2 + ';\n'
         self.variables += 'int ' + temp3 + ';\n'
-        p[0].code = p[3].code + temp2 + ' = ' + p[3].get_value() + ' + 1;\n' + temp3 + ' = ' + p[1] + " + " + temp2 + ';\n' + temp + '=' + "array[" + temp3 + "];\n"
+        p[0].code = p[3].code + temp2 + ' = ' + p[3].get_value() + ' + 1;\n' + temp3 + ' = ' + p[1] + " + " + temp2 + ';\n' + temp + " = array[" + temp3 + "];\n"
 
     def generate_exp_sub_code(self, p, temp):
         p[0] = NonTerminal()
         p[0].place = temp
         self.variables += 'int ' + temp + ';\n'
-        p[0].code = p[2].code + temp + '=' + p[1] + p[2].get_value() + ';\n'
+        p[0].code = p[2].code + temp + ' = ' + p[1] + ' ' + p[2].get_value() + ';\n'
 
     def generate_exp_par_code(self, p):
         p[0] = LogicTerminal()
@@ -151,19 +151,22 @@ class CodeGenerator:
         p[0] = p[2]
 
     def generate_stmtlist_code(self, p, q):
-        p[0] = StatementTerminal()
-        if p[2].address:
-            q = p[2].address
-        if p[1].code:
-            p[0].address = p[1].address
+        if p[2].code:
+            p[0] = StatementTerminal()
+            if p[2].address:
+                q = p[2].address
+            if p[1].code:
+                p[0].address = p[1].address
+            else:
+                p[0].address = q
+            p[1].next_list_back_patch(q)
+            if p[2].address:
+                p[0].code = p[1].code + p[2].code
+            else:
+                p[0].code = p[1].code + q + ": " + p[2].code
+            p[0].next_list = p[2].next_list
         else:
-            p[0].address = q
-        p[1].next_list_back_patch(q)
-        if p[2].address:
-            p[0].code = p[1].code + p[2].code
-        else:
-            p[0].code = p[1].code + q + ": " + p[2].code
-        p[0].next_list = p[2].next_list
+            p[0] = p[1]
 
     def generate_stmtlist_empty_code(self, p):
         p[0] = StatementTerminal()
