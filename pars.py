@@ -93,7 +93,7 @@ class Parser:
         exp : exp MOD exp
         exp : exp MUL exp
         """
-        self.codeGenerator.generate_exp_arithmetic_code(p, self.new_temp())
+        self.codeGenerator.generate_exp_arithmetic_code(p, self.new_temp(), self.new_temp(), self.new_temp(), self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad())
 
     def p_exp_const(self, p):
         "exp : const"
@@ -113,7 +113,7 @@ class Parser:
 
     def p_exp_sub(self, p):
         "exp : SUB exp"
-        self.codeGenerator.generate_exp_sub_code(p, self.new_temp())
+        self.codeGenerator.generate_exp_sub_code(p, self.new_temp(), self.new_temp(), self.next_quad(), self.next_quad(), self.next_quad())
 
     def p_exp_par(self, p):
         "exp : LRB exp RRB"
