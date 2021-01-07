@@ -195,11 +195,11 @@ class Parser:
 
     def p_stmt_for(self, p):
         "stmt : FOR LRB exp SEMICOLON exp SEMICOLON exp RRB stmt"
-        self.codeGenerator.generate_stmt_for_code(p, self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad())
+        self.codeGenerator.generate_stmt_for_code(p, self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad())
 
     def p_stmt_foreach(self, p):
         "stmt : FOR LRB ID IN ID RRB stmt"
-        self.codeGenerator.generate_stmt_foreach_code(p, self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad(), self.new_temp(), self.new_temp(), self.new_temp(), self.new_temp())
+        self.codeGenerator.generate_stmt_foreach_code(p, self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad(), self.new_temp(), self.new_temp(), self.new_temp(), self.new_temp())
 
     def p_stmt_case(self, p):
         "stmt : ON LRB exp RRB LCB cases RCB SEMICOLON"
@@ -335,12 +335,12 @@ class Parser:
         print("stmt, len:",len(p))
 
     precedence = (
-        ('right', "ASSIGN"),
         ('left', "OR"),
         ('left', "AND"),
         ('left', "NOT"),
         ('left', 'EXP'),
         ('left', "GT", "LT", "NE", "EQ", "LE", "GE"),
+        ('right', "ASSIGN"),
         ('left', "MOD"),
         ('left', "SUM", "SUB"),
         ('left', "MUL", "DIV"),

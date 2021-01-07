@@ -287,7 +287,12 @@ class CodeGenerator:
 
     def generate_relopexp_code(self, p, q1, q2):
         p[0] = LogicTerminal()
-        p[0].address = p[1].address
+        if p[1].code:
+            p[0].address = p[1].address
+        elif p[3].code:
+            p[0].address = p[3].address
+        else:
+            p[0].address = q1
         p[0].code += p[1].code + p[3].code
         p[0].code += q1 + ": if (" + p[1].get_value() + ' ' + p[2] + ' ' + p[3].get_value() + ") goto -;\n"
         p[0].code += q2 + ": goto -;\n"
@@ -297,8 +302,11 @@ class CodeGenerator:
 
     def generate_relopexp_rel_code(self, p, q1, q2, q3):
         temp_terminal = LogicTerminal()
-        temp_terminal.address = p[1].right_most_exp.address
-        temp_terminal.code = p[1].right_most_exp.code + p[3].code
+        if p[3].code:
+            temp_terminal.address = p[3].address
+        else:
+            temp_terminal.address = q1
+        temp_terminal.code = p[3].code
         temp_terminal.code += q1 + ": if (" + p[1].right_most_exp.get_value() + ' ' + p[2] + ' ' + p[3].get_value() + ") goto -;\n"
         temp_terminal.code += q2 + ": goto -;\n"
         temp_terminal.true_list = [q1]
@@ -440,7 +448,7 @@ class CodeGenerator:
         p[0].code += "goto " + q1 + ";\n"
         p[0].next_list = p[3].false_list
 
-    def generate_stmt_for_code(self, p, q1, q2, q3, q4):
+    def generate_stmt_for_code(self, p, q1, q2, q3, q4, q5):
         if not isinstance(p[5], LogicTerminal):
             p[5] = self.arith_to_logic(q3, q4, p[5])
 
@@ -452,9 +460,11 @@ class CodeGenerator:
             p[0].address = p[3].address
         else:
             p[0].address = q1
+        if p[7].address:
+            q5 = p[7].address
         if p[9].address:
             q2 = p[9].address
-        p[9].next_list_back_patch(q1)
+        p[9].next_list_back_patch(q5)
         p[5].true_list_back_patch(q2)
         if p[5].address:
             p[0].code += p[5].code
@@ -464,10 +474,13 @@ class CodeGenerator:
             p[0].code += p[9].code
         else:
             p[0].code += q2 + ": " + p[9].code
-        p[0].code += p[7].code + "goto " + q1 + ";\n"
+        if p[7].address:
+            p[0].code += p[7].code + "goto " + q1 + ";\n"
+        else:
+            p[0].code += q5 + ": " + p[7].code + "goto " + q1 + ";\n"
         p[0].next_list = p[5].false_list
 
-    def generate_stmt_foreach_code(self, p, q1, q2, q3, q4, temp, temp2, temp3, temp4):
+    def generate_stmt_foreach_code(self, p, q1, q2, q3, q4, q5, temp, temp2, temp3, temp4):
         self.variables += 'int ' + p[3] + ';\n'
         self.variables += 'int ' + temp + ';\n'
         self.variables += 'int ' + temp2 + ';\n'
@@ -485,15 +498,14 @@ class CodeGenerator:
         p[0].code = temp + ' = ' + p[5] + ';\n' + temp3 + ' = array[' + temp + '];\n' + temp2 + ' = ' + temp + ' + 1;\n' + temp4 + ' = ' + temp2 + ' + ' + temp3 + ';\n'
         if iteration_exp.address:
             q1 = iteration_exp.address
-        p[7].next_list_back_patch(q1)
+        p[7].next_list_back_patch(q5)
         iteration_exp.true_list_back_patch(q2)
         if iteration_exp.address:
             p[0].code += iteration_exp.code
         else:
             p[0].code += q1 + ": " + iteration_exp.code
-        p[0].code += p[3] + ' = array[' + temp2 + '];\n'
         p[0].code += q2 + ": " + p[3] + ' = array[' + temp2 + '];\n' + p[7].code
-        p[0].code += temp2 + " = " + temp2 + " + 1;\ngoto " + q1 + ";\n"
+        p[0].code += q5 + ": " + temp2 + " = " + temp2 + " + 1;\ngoto " + q1 + ";\n"
         p[0].next_list = iteration_exp.false_list
 
     def generate_cases_empty_code(self, p):
