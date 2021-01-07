@@ -2403,8 +2403,6 @@ state 74
     (53) relopexp -> exp . LE exp
     (54) relopexp -> exp . GE exp
 
-    AND             reduce using rule 14 (exp -> ID ASSIGN exp .)
-    OR              reduce using rule 14 (exp -> ID ASSIGN exp .)
     COLON           reduce using rule 14 (exp -> ID ASSIGN exp .)
     COMMA           reduce using rule 14 (exp -> ID ASSIGN exp .)
     RSB             reduce using rule 14 (exp -> ID ASSIGN exp .)
@@ -2415,6 +2413,8 @@ state 74
     DIV             shift and go to state 48
     MOD             shift and go to state 49
     MUL             shift and go to state 50
+    AND             shift and go to state 51
+    OR              shift and go to state 52
     GT              shift and go to state 53
     LT              shift and go to state 54
     NE              shift and go to state 55
@@ -2427,14 +2427,14 @@ state 74
   ! DIV             [ reduce using rule 14 (exp -> ID ASSIGN exp .) ]
   ! MOD             [ reduce using rule 14 (exp -> ID ASSIGN exp .) ]
   ! MUL             [ reduce using rule 14 (exp -> ID ASSIGN exp .) ]
+  ! AND             [ reduce using rule 14 (exp -> ID ASSIGN exp .) ]
+  ! OR              [ reduce using rule 14 (exp -> ID ASSIGN exp .) ]
   ! GT              [ reduce using rule 14 (exp -> ID ASSIGN exp .) ]
   ! LT              [ reduce using rule 14 (exp -> ID ASSIGN exp .) ]
   ! NE              [ reduce using rule 14 (exp -> ID ASSIGN exp .) ]
   ! EQ              [ reduce using rule 14 (exp -> ID ASSIGN exp .) ]
   ! LE              [ reduce using rule 14 (exp -> ID ASSIGN exp .) ]
   ! GE              [ reduce using rule 14 (exp -> ID ASSIGN exp .) ]
-  ! AND             [ shift and go to state 51 ]
-  ! OR              [ shift and go to state 52 ]
 
 
 state 75
@@ -4441,8 +4441,6 @@ state 133
     (54) relopexp -> exp . GE exp
 
     SEMICOLON       reduce using rule 14 (exp -> ID ASSIGN exp .)
-    AND             reduce using rule 14 (exp -> ID ASSIGN exp .)
-    OR              reduce using rule 14 (exp -> ID ASSIGN exp .)
     COLON           reduce using rule 10 (iddec -> ID ASSIGN exp .)
     COMMA           reduce using rule 10 (iddec -> ID ASSIGN exp .)
     SUM             shift and go to state 46
@@ -4450,6 +4448,8 @@ state 133
     DIV             shift and go to state 48
     MOD             shift and go to state 49
     MUL             shift and go to state 50
+    AND             shift and go to state 51
+    OR              shift and go to state 52
     GT              shift and go to state 53
     LT              shift and go to state 54
     NE              shift and go to state 55
@@ -4462,14 +4462,14 @@ state 133
   ! DIV             [ reduce using rule 14 (exp -> ID ASSIGN exp .) ]
   ! MOD             [ reduce using rule 14 (exp -> ID ASSIGN exp .) ]
   ! MUL             [ reduce using rule 14 (exp -> ID ASSIGN exp .) ]
+  ! AND             [ reduce using rule 14 (exp -> ID ASSIGN exp .) ]
+  ! OR              [ reduce using rule 14 (exp -> ID ASSIGN exp .) ]
   ! GT              [ reduce using rule 14 (exp -> ID ASSIGN exp .) ]
   ! LT              [ reduce using rule 14 (exp -> ID ASSIGN exp .) ]
   ! NE              [ reduce using rule 14 (exp -> ID ASSIGN exp .) ]
   ! EQ              [ reduce using rule 14 (exp -> ID ASSIGN exp .) ]
   ! LE              [ reduce using rule 14 (exp -> ID ASSIGN exp .) ]
   ! GE              [ reduce using rule 14 (exp -> ID ASSIGN exp .) ]
-  ! AND             [ shift and go to state 51 ]
-  ! OR              [ shift and go to state 52 ]
 
 
 state 134
@@ -4729,8 +4729,6 @@ state 143
     (53) relopexp -> exp . LE exp
     (54) relopexp -> exp . GE exp
 
-    AND             reduce using rule 23 (exp -> ID LSB exp RSB ASSIGN exp .)
-    OR              reduce using rule 23 (exp -> ID LSB exp RSB ASSIGN exp .)
     COLON           reduce using rule 23 (exp -> ID LSB exp RSB ASSIGN exp .)
     COMMA           reduce using rule 23 (exp -> ID LSB exp RSB ASSIGN exp .)
     RSB             reduce using rule 23 (exp -> ID LSB exp RSB ASSIGN exp .)
@@ -4741,6 +4739,8 @@ state 143
     DIV             shift and go to state 48
     MOD             shift and go to state 49
     MUL             shift and go to state 50
+    AND             shift and go to state 51
+    OR              shift and go to state 52
     GT              shift and go to state 53
     LT              shift and go to state 54
     NE              shift and go to state 55
@@ -4753,14 +4753,14 @@ state 143
   ! DIV             [ reduce using rule 23 (exp -> ID LSB exp RSB ASSIGN exp .) ]
   ! MOD             [ reduce using rule 23 (exp -> ID LSB exp RSB ASSIGN exp .) ]
   ! MUL             [ reduce using rule 23 (exp -> ID LSB exp RSB ASSIGN exp .) ]
+  ! AND             [ reduce using rule 23 (exp -> ID LSB exp RSB ASSIGN exp .) ]
+  ! OR              [ reduce using rule 23 (exp -> ID LSB exp RSB ASSIGN exp .) ]
   ! GT              [ reduce using rule 23 (exp -> ID LSB exp RSB ASSIGN exp .) ]
   ! LT              [ reduce using rule 23 (exp -> ID LSB exp RSB ASSIGN exp .) ]
   ! NE              [ reduce using rule 23 (exp -> ID LSB exp RSB ASSIGN exp .) ]
   ! EQ              [ reduce using rule 23 (exp -> ID LSB exp RSB ASSIGN exp .) ]
   ! LE              [ reduce using rule 23 (exp -> ID LSB exp RSB ASSIGN exp .) ]
   ! GE              [ reduce using rule 23 (exp -> ID LSB exp RSB ASSIGN exp .) ]
-  ! AND             [ shift and go to state 51 ]
-  ! OR              [ shift and go to state 52 ]
 
 
 state 144

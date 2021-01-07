@@ -27,7 +27,7 @@ class Parser:
         """
         declist : declist dec
         """
-        self.codeGenerator.generate_declist_code(p)
+        self.codeGenerator.generate_declist_code(p, self.next_quad())
         
 
     def p_dec_vardec(self, p):
@@ -79,7 +79,7 @@ class Parser:
         """
         idlist : idlist COMMA iddec
         """
-        self.codeGenerator.generate_idlist_comma_code(p)
+        self.codeGenerator.generate_idlist_comma_code(p, self.next_quad())
 
     def p_exp_assign(self, p):
         "exp : ID ASSIGN exp"
@@ -183,19 +183,19 @@ class Parser:
 
     def p_stmt_if(self, p):
         "stmt : IF LRB exp RRB stmt elseiflist %prec IFREDUCE"
-        self.codeGenerator.generate_stmt_if_code(p, self.next_quad(), self.next_quad(), self.next_quad())
+        self.codeGenerator.generate_stmt_if_code(p, self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad())
 
     def p_stmt_while(self, p):
         "stmt : WHILE LRB exp RRB stmt"
-        self.codeGenerator.generate_stmt_while_code(p, self.next_quad(), self.next_quad())
+        self.codeGenerator.generate_stmt_while_code(p, self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad())
 
     def p_stmt_if_else(self, p):
         "stmt : IF LRB exp RRB stmt elseiflist ELSE stmt"
-        self.codeGenerator.generate_stmt_if_else_code(p, self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad())
+        self.codeGenerator.generate_stmt_if_else_code(p, self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad())
 
     def p_stmt_for(self, p):
         "stmt : FOR LRB exp SEMICOLON exp SEMICOLON exp RRB stmt"
-        self.codeGenerator.generate_stmt_for_code(p, self.next_quad(), self.next_quad())
+        self.codeGenerator.generate_stmt_for_code(p, self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad())
 
     def p_stmt_foreach(self, p):
         "stmt : FOR LRB ID IN ID RRB stmt"
@@ -223,7 +223,7 @@ class Parser:
         """
         elseiflist : elseiflist ELSEIF LRB exp RRB stmt
         """
-        self.codeGenerator.generate_elseiflist_code(p, self.next_quad(), self.next_quad(), self.next_quad())
+        self.codeGenerator.generate_elseiflist_code(p, self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad())
 
     def p_elseiflist_empty(self, p):
         "elseiflist :"
@@ -253,19 +253,19 @@ class Parser:
         relopexp : relopexp LE exp
         relopexp : relopexp GE exp
         """
-        self.codeGenerator.generate_relopexp_rel_code(p, self.next_quad(), self.next_quad())
+        self.codeGenerator.generate_relopexp_rel_code(p, self.next_quad(), self.next_quad(), self.next_quad())
 
     def p_exp_and(self, p):
         "exp : exp AND exp"
-        self.codeGenerator.generate_exp_and_code(p)
+        self.codeGenerator.generate_exp_and_code(p, self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad())
 
     def p_exp_or(self, p):
         "exp : exp OR exp"
-        self.codeGenerator.generate_exp_or_code(p)
+        self.codeGenerator.generate_exp_or_code(p, self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad())
 
     def p_exp_not(self, p):
         "exp : NOT exp"
-        self.codeGenerator.generate_exp_not_code(p)
+        self.codeGenerator.generate_exp_not_code(p, self.next_quad(), self.next_quad())
 
     def p_const(self, p):
         """
@@ -335,11 +335,11 @@ class Parser:
         print("stmt, len:",len(p))
 
     precedence = (
+        ('right', "ASSIGN"),
         ('left', "OR"),
         ('left', "AND"),
         ('left', "NOT"),
         ('left', 'EXP'),
-        ('right', "ASSIGN"),
         ('left', "GT", "LT", "NE", "EQ", "LE", "GE"),
         ('left', "MOD"),
         ('left', "SUM", "SUB"),

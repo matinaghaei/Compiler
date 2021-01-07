@@ -7,8 +7,6 @@ class Lexer:
         'bool':  'BOOLEAN',
         'float':'FLOAT',
         'fun':'FUNCTION',
-        # 'True': 'TRUE',
-        'False': 'FALSE',
         'print':'PRINT',
         'return': 'RETURN',
         'main': 'MAIN',
@@ -73,6 +71,9 @@ class Lexer:
         r'True'
         return t
 
+    def t_FALSE(self, t):
+        r'False'
+        return t
 
     def t_ID(self, t):
         r'[a-z_][A-Za-z0-9_]*'

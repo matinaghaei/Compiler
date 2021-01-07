@@ -4,6 +4,7 @@ class NonTerminal:
         self.value = ""
         self.code = ""
         self.place = ""
+        self.address = ""
 
     def get_value(self):
         if self.value == "":
@@ -17,7 +18,6 @@ class LogicTerminal(NonTerminal):
         super().__init__()
         self.true_list = []
         self.false_list = []
-        self.address = ""
         self.right_most_exp = ""
 
     def true_list_back_patch(self, label):
@@ -44,7 +44,6 @@ class StatementTerminal(NonTerminal):
     def __init__(self):
         super().__init__()
         self.next_list = []
-        self.address = ""
 
     def next_list_back_patch(self, label):
         lines = self.code.split('\n')

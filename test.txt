@@ -1,8 +1,10 @@
-n1 = 1,n3,i:int;
+n1 = 20 - 10 / 2:int;
 main()
 {
-    a[5] : int;
-    a[1] = 1 < 2;
-    n1 = a[1];
+    n2, n3:int;
+    n2 = n1 / (3 + 2);
+    n3 = n1 * n2 - 10 ;
     print(n1);
+    print(n2);
+    print(n3);
 }
