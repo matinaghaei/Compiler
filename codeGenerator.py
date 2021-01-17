@@ -181,16 +181,11 @@ class CodeGenerator:
         p[0] = NonTerminal()
         p[0].value = p[1]
 
-    def generate_explist_code(self, p):
-        p[0] = NonTerminal()
-        p[0].value = p[1].get_value()
-
-    def generate_explist_comma_code(self, p):
-        p[0] = NonTerminal()
-        p[0].value = p[1].get_value() + p[2] + p[3].get_value()
-
-    def generate_block_code(self, p):
+    def generate_block_code(self, p, q):
         p[0] = p[2]
+        if p[0].next_list:
+            p[0].next_list_back_patch(q)
+            p[0].code += q + ": printf(\"\");\n"
 
     def generate_stmtlist_code(self, p, q):
         if p[2].code:
@@ -245,7 +240,7 @@ class CodeGenerator:
             p[0].false_list = [q]
         p[0].code = q + ": goto -;\n"
 
-    def generate_exp_or_code(self, p, q1, q2, q3, q4):
+    def generate_exp_or_code(self, p, q1, q2, q3, q4, q5):
         if not isinstance(p[1], LogicTerminal):
             p[1] = self.arith_to_logic(q1, q2, p[1])
         if not isinstance(p[3], LogicTerminal):
@@ -253,12 +248,17 @@ class CodeGenerator:
 
         p[0] = LogicTerminal()
         p[0].address = p[1].address
-        p[1].false_list_back_patch(p[3].address)
-        p[0].code = p[1].code + p[3].code
+        if p[3].address:
+            q5 = p[3].address
+        p[1].false_list_back_patch(q5)
+        if p[3].address:
+            p[0].code = p[1].code + p[3].code
+        else:
+            p[0].code = p[1].code + q5 + ": " + p[3].code
         p[0].true_list = p[1].true_list + p[3].true_list
         p[0].false_list = p[3].false_list
 
-    def generate_exp_and_code(self, p, q1, q2, q3, q4):
+    def generate_exp_and_code(self, p, q1, q2, q3, q4, q5):
         if not isinstance(p[1], LogicTerminal):
             p[1] = self.arith_to_logic(q1, q2, p[1])
         if not isinstance(p[3], LogicTerminal):
@@ -266,8 +266,13 @@ class CodeGenerator:
 
         p[0] = LogicTerminal()
         p[0].address = p[1].address
-        p[1].true_list_back_patch(p[3].address)
-        p[0].code = p[1].code + p[3].code
+        if p[3].address:
+            q5 = p[3].address
+        p[1].true_list_back_patch(q5)
+        if p[3].address:
+            p[0].code = p[1].code + p[3].code
+        else:
+            p[0].code = p[1].code + q5 + ": " + p[3].code
         p[0].false_list = p[1]
         p[0].false_list = p[1].false_list + p[3].false_list
         p[0].true_list = p[3].true_list
@@ -571,3 +576,12 @@ class CodeGenerator:
 
 
     # part 3 ----------------------------------------------------------------------------------------
+
+
+    def generate_explist_code(self, p):
+        p[0] = NonTerminal()
+        p[0].value = p[1].get_value()
+
+    def generate_explist_comma_code(self, p):
+        p[0] = NonTerminal()
+        p[0].value = p[1].get_value() + p[2] + p[3].get_value()

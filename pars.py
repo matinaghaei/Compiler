@@ -126,24 +126,11 @@ class Parser:
         """
         self.codeGenerator.generate_const_arithmetic_code(p)
 
-
-    def p_explist(self, p):
-        """
-        explist : exp
-        """
-        self.codeGenerator.generate_explist_code(p)
-
-    def p_explist_comma(self, p):
-        """
-        explist : explist COMMA exp
-        """
-        self.codeGenerator.generate_explist_comma_code(p)
-
     def p_block(self, p):
         """
         block : LCB stmtlist RCB
         """
-        self.codeGenerator.generate_block_code(p)
+        self.codeGenerator.generate_block_code(p, self.next_quad())
 
     def p_stmtlist(self, p):
         """
@@ -257,11 +244,11 @@ class Parser:
 
     def p_exp_and(self, p):
         "exp : exp AND exp"
-        self.codeGenerator.generate_exp_and_code(p, self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad())
+        self.codeGenerator.generate_exp_and_code(p, self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad())
 
     def p_exp_or(self, p):
         "exp : exp OR exp"
-        self.codeGenerator.generate_exp_or_code(p, self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad())
+        self.codeGenerator.generate_exp_or_code(p, self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad(), self.next_quad())
 
     def p_exp_not(self, p):
         "exp : NOT exp"
@@ -275,6 +262,18 @@ class Parser:
         self.codeGenerator.generate_stmt_const_code(p, self.next_quad())
 
     # part 3 ----------------------------------------------------------------------------------------
+
+    def p_explist(self, p):
+        """
+        explist : exp
+        """
+        self.codeGenerator.generate_explist_code(p)
+
+    def p_explist_comma(self, p):
+        """
+        explist : explist COMMA exp
+        """
+        self.codeGenerator.generate_explist_comma_code(p)
 
     def p_exp_fun(self, p):
         """
@@ -335,12 +334,12 @@ class Parser:
         print("stmt, len:",len(p))
 
     precedence = (
+        ('right', "ASSIGN"),
         ('left', "OR"),
         ('left', "AND"),
         ('left', "NOT"),
         ('left', 'EXP'),
         ('left', "GT", "LT", "NE", "EQ", "LE", "GE"),
-        ('right', "ASSIGN"),
         ('left', "MOD"),
         ('left', "SUM", "SUB"),
         ('left', "MUL", "DIV"),
