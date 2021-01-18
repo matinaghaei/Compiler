@@ -5,12 +5,14 @@ class CodeGenerator:
 
     def __init__(self):
         self.variables = ""
+        self.function_dict = {}
+        self.stack = []
 
     # part 1 ----------------------------------------------------------------------------------------
 
     def generate_main_code (self, p):
         p[0] = NonTerminal()
-        p[0].code = "#include <stdio.h>\nint array[10000]; \nint arr_p = 0;\n" + self.variables + "main()\n{\n" + p[1].code + p[5].code + "}"
+        p[0].code = "#include <stdio.h>\nint array[10000]; \nint arr_p = 0;\nint stack_p = (int)1e6 - 1;\n" + self.variables + "main()\n{\n" + p[1].code + p[5].code + "}"
         print(p[0].code)
 
     def generate_declist_empty_code (self, p):
@@ -40,7 +42,8 @@ class CodeGenerator:
     def generate_iddec_ID_code (self, p):
         p[0] = StatementTerminal()
         self.variables += 'int ' + p[1] + ';\n'
-        p[0].code = p[1] + ' = 0;\n'
+        p[0].code = f'array[stack_p] = {p[1]};\n stack_p = stack_p - 1;\n'
+        self.stack.append(p[1])
 
     def generate_idlist_comma_code(self, p, q):
         p[0] = StatementTerminal()
@@ -66,14 +69,15 @@ class CodeGenerator:
     def generate_iddec_assign_code(self, p, q1, q2, q3):
         p[0] = StatementTerminal()
         self.variables += "int " + p[1] + ";\n"
-        p[0].address = p[3].address
+        p[0].code = f"array[stack_p] = {p[1]};\nstack_p = stack_p - 1;\n"
+        self.stack.append(p[1])
         if isinstance(p[3], LogicTerminal):
             p[3].true_list_back_patch(q1)
             p[3].false_list_back_patch(q2)
-            p[0].code = p[3].code + q1 + ': ' + p[1] + ' = ' + '1;\n' + q3 + ': goto -;\n' + q2 + ': ' + p[1] + ' = ' + '0;\n'
+            p[0].code += p[3].code + q1 + ': ' + p[1] + ' = ' + '1;\n' + q3 + ': goto -;\n' + q2 + ': ' + p[1] + ' = ' + '0;\n'
             p[0].next_list = [q3]
         else:
-            p[0].code = p[3].code + p[1] + ' = ' + p[3].get_value() + ';\n'
+            p[0].code += p[3].code + p[1] + ' = ' + p[3].get_value() + ';\n'
 
     def generate_exp_assign_code(self, p, q1, q2, q3):
         p[0] = StatementTerminal()
@@ -576,6 +580,34 @@ class CodeGenerator:
 
 
     # part 3 ----------------------------------------------------------------------------------------
+
+    def generate_paramdec_code (self, p): 
+        p[0] = [p[1]]
+
+    def generate_paramdeclist_code (self, p): 
+        p[0] = p[1]
+
+    def generate_paramdeclist_comma_code (self, p): 
+        p[0] = p[1] + p[3]
+
+    def generate_paramdecs_code (self, p): 
+        p[0] = p[1]
+    
+    def generate_paramdecs_empty_code (self, p): 
+        p[0] = []
+    
+    def generate_funcdec_code (self, p, q):
+        self.stack.append("start" + p[2]) 
+        self.function_dict[p[2]] = (q,p[4])
+        p[0] = NonTerminal()
+        if p[6].address: 
+            q = p[6].address
+
+        if p[6].address: 
+            p[0].code = p[6].code 
+        else:
+            p[0].code = q + ": " + p[6].code  
+        
 
 
     def generate_explist_code(self, p):

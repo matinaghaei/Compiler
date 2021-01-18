@@ -156,7 +156,8 @@ class Parser:
 
     def p_stmt_var(self, p):
         """
-        stmt : vardec
+        
+         : vardec
         """
         self.codeGenerator.generate_stmt_var_code(p)
 
@@ -263,6 +264,56 @@ class Parser:
 
     # part 3 ----------------------------------------------------------------------------------------
 
+    def p_paramdecs(self, p):
+        """
+        paramdecs : paramdecslist
+        """
+        self.codeGenerator.generate_paramdecs_code(p)
+
+        def p_paramdecs_empty(self, p):
+        """
+        paramdecs :
+        """
+        self.codeGenerator.generate_paramdecs_empty_code(p)
+
+    def p_paramdecslist(self, p):
+        """
+        paramdecslist : paramdec
+        """
+        self.codeGenerator.generate_paramdeclist_code(p)
+        
+
+    def p_paramdecslist_comma(self, p):
+        """
+        paramdecslist : paramdecslist COMMA paramdec
+        """
+        self.codeGenerator.generate_paramdeclist_comma_code(p)
+        
+
+    def p_paramdec(self, p):
+        """
+        paramdec : ID COLON type
+        """
+        self.codeGenerator.generate_paramdec_code(p)
+
+    def p_paramdec_array(self, p):
+        """
+        paramdec : ID LSB RSB COLON type
+        """
+        self.codeGenerator.generate_paramdec_code(p)
+    
+
+    def p_funcdec_return(self, p):
+        """
+        funcdec : FUNCTION ID LRB paramdecs RRB COLON type block
+        """
+        pass
+
+    def p_funcdec(self, p):
+        """
+        funcdec : FUNCTION ID LRB paramdecs RRB block
+        """
+        pass
     def p_explist(self, p):
         """
         explist : exp
@@ -287,45 +338,6 @@ class Parser:
         dec : funcdec
         """
         print("dec : vardec | funcdec")
-    def p_funcdec(self, p):
-        """
-        funcdec : FUNCTION ID LRB paramdecs RRB COLON type block
-        funcdec : FUNCTION ID LRB paramdecs RRB block
-        """
-        if len(p) == 9:
-            print('FUNCTION ID LRB paramdecs RRB COLON type block')
-        else:
-            print('funcdec : FUNCTION ID LRB paramdecs RRB block')
-
-    def p_paramdecs(self, p):
-        """
-        paramdecs : paramdecslist
-        paramdecs :
-        """
-        if len(p) == 2:
-            print('paramdecs : paramdecslist')
-        else:
-            print('paramdecs :')
-
-    def p_paramdecslist(self, p):
-        """
-        paramdecslist : paramdec
-        paramdecslist : paramdecslist COMMA paramdec
-        """
-        if len(p) == 2:
-            print('paramdecslist : paramdec')
-        else:
-            print('paramdecslist : paramdecslist COMMA paramdec')
-
-    def p_paramdec(self, p):
-        """
-        paramdec : ID COLON type
-        paramdec : ID LSB RSB COLON type
-        """
-        if len(p) == 4:
-            print('paramdec : ID COLON type')
-        else:
-            print('paramdec : ID LSB RSB COLON type')
 
     def p_stmt(self, p):
         """
