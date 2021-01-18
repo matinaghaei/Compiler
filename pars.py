@@ -15,7 +15,6 @@ class Parser:
     def p_program(self, p):
         "program : declist MAIN LRB RRB block"
         self.codeGenerator.generate_main_code(p)
-    
 
     def p_declist_empty(self, p):
         """
@@ -156,8 +155,7 @@ class Parser:
 
     def p_stmt_var(self, p):
         """
-        
-         : vardec
+        stmt : vardec
         """
         self.codeGenerator.generate_stmt_var_code(p)
 
@@ -270,7 +268,7 @@ class Parser:
         """
         self.codeGenerator.generate_paramdecs_code(p)
 
-        def p_paramdecs_empty(self, p):
+    def p_paramdecs_empty(self, p):
         """
         paramdecs :
         """
@@ -281,39 +279,39 @@ class Parser:
         paramdecslist : paramdec
         """
         self.codeGenerator.generate_paramdeclist_code(p)
-        
 
     def p_paramdecslist_comma(self, p):
         """
         paramdecslist : paramdecslist COMMA paramdec
         """
         self.codeGenerator.generate_paramdeclist_comma_code(p)
-        
 
     def p_paramdec(self, p):
         """
         paramdec : ID COLON type
-        """
-        self.codeGenerator.generate_paramdec_code(p)
-
-    def p_paramdec_array(self, p):
-        """
         paramdec : ID LSB RSB COLON type
         """
         self.codeGenerator.generate_paramdec_code(p)
-    
 
-    def p_funcdec_return(self, p):
+    def p_exp_fun(self, p):
         """
-        funcdec : FUNCTION ID LRB paramdecs RRB COLON type block
+        exp : ID LRB RRB
+        exp : ID LRB explist RRB
         """
-        pass
+        self.codeGenerator.generate_exp_fun_code(p, self.new_temp())
 
     def p_funcdec(self, p):
         """
         funcdec : FUNCTION ID LRB paramdecs RRB block
         """
-        pass
+        self.codeGenerator.generate_funcdec_code(p, self.next_quad())
+
+    def p_funcdec_return(self, p):
+        """
+        funcdec : FUNCTION ID LRB paramdecs RRB COLON type block
+        """
+        self.codeGenerator.generate_funcdec_return_code(p, self.next_quad())
+
     def p_explist(self, p):
         """
         explist : exp
@@ -326,24 +324,17 @@ class Parser:
         """
         self.codeGenerator.generate_explist_comma_code(p)
 
-    def p_exp_fun(self, p):
-        """
-        exp : ID LRB explist RRB
-        exp : ID LRB RRB
-        """
-        pass
-
     def p_dec_funcdec(self, p):
         """
         dec : funcdec
         """
-        print("dec : vardec | funcdec")
+        self.codeGenerator.generate_dec_fundec_code(p)
 
-    def p_stmt(self, p):
+    def p_stmt_return(self, p):
         """
         stmt : RETURN exp SEMICOLON
         """
-        print("stmt, len:",len(p))
+        self.p_stmt_return(p)
 
     precedence = (
         ('right', "ASSIGN"),
