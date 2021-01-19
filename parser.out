@@ -76,12 +76,12 @@ Rule 66    paramdecslist -> paramdec
 Rule 67    paramdecslist -> paramdecslist COMMA paramdec
 Rule 68    paramdec -> ID COLON type
 Rule 69    paramdec -> ID LSB RSB COLON type
-Rule 70    funcdec -> FUNCTION ID LRB paramdecs RRB block
-Rule 71    exp -> ID LRB RRB
-Rule 72    funcdec -> FUNCTION ID LRB paramdecs RRB COLON type block
-Rule 73    explist -> exp
-Rule 74    explist -> explist COMMA exp
-Rule 75    exp -> ID LRB explist RRB
+Rule 70    exp -> ID LRB RRB
+Rule 71    exp -> ID LRB explist RRB
+Rule 72    funcdec -> FUNCTION ID LRB paramdecs RRB block
+Rule 73    funcdec -> FUNCTION ID LRB paramdecs RRB COLON type block
+Rule 74    explist -> exp
+Rule 75    explist -> explist COMMA exp
 Rule 76    dec -> funcdec
 Rule 77    stmt -> RETURN exp SEMICOLON
 
@@ -90,8 +90,8 @@ Terminals, with rules where they appear
 AND                  : 59
 ASSIGN               : 10 14 23
 BOOLEAN              : 8
-COLON                : 5 41 68 69 72
-COMMA                : 13 67 74
+COLON                : 5 41 68 69 73
+COMMA                : 13 67 75
 DIV                  : 17
 ELSE                 : 37
 ELSEIF               : 44
@@ -101,17 +101,17 @@ FALSE                : 63
 FLOAT                : 7
 FLOATNUMBER          : 26
 FOR                  : 38 39
-FUNCTION             : 70 72
+FUNCTION             : 72 73
 GE                   : 52 58
 GT                   : 47 53
-ID                   : 9 10 11 14 21 22 23 34 39 39 68 69 70 71 72 75
+ID                   : 9 10 11 14 21 22 23 34 39 39 68 69 70 71 72 73
 IF                   : 35 37
 IN                   : 39
 INTEGER              : 6
 INTEGERNUMBER        : 27
 LCB                  : 28 40
 LE                   : 51 57
-LRB                  : 1 25 34 35 36 37 38 39 40 44 70 71 72 75
+LRB                  : 1 25 34 35 36 37 38 39 40 44 70 71 72 73
 LSB                  : 11 22 23 69
 LT                   : 48 54
 MAIN                 : 1
@@ -124,7 +124,7 @@ OR                   : 60
 PRINT                : 34
 RCB                  : 28 40
 RETURN               : 77
-RRB                  : 1 25 34 35 36 37 38 39 40 44 70 71 72 75
+RRB                  : 1 25 34 35 36 37 38 39 40 44 70 71 72 73
 RSB                  : 11 22 23 69
 SEMICOLON            : 5 31 34 38 38 40 77
 SUB                  : 16 24
@@ -136,26 +136,26 @@ error                :
 
 Nonterminals, with rules where they appear
 
-block                : 1 32 70 72
+block                : 1 32 72 73
 case                 : 42
 cases                : 40 42
 const                : 20 41
 dec                  : 3
 declist              : 1 3
 elseiflist           : 35 37 44
-exp                  : 10 11 14 15 15 16 16 17 17 18 18 19 19 22 23 23 24 25 31 35 36 37 38 38 38 40 44 47 47 48 48 49 49 50 50 51 51 52 52 53 54 55 56 57 58 59 59 60 60 61 73 74 77
-explist              : 74 75
+exp                  : 10 11 14 15 15 16 16 17 17 18 18 19 19 22 23 23 24 25 31 35 36 37 38 38 38 40 44 47 47 48 48 49 49 50 50 51 51 52 52 53 54 55 56 57 58 59 59 60 60 61 74 75 77
+explist              : 71 75
 funcdec              : 76
 iddec                : 12 13
 idlist               : 5 13
 paramdec             : 66 67
-paramdecs            : 70 72
+paramdecs            : 72 73
 paramdecslist        : 64 67
 program              : 0
 relopexp             : 46 53 54 55 56 57 58
 stmt                 : 29 35 36 37 37 38 39 44
 stmtlist             : 28 29 41
-type                 : 5 68 69 72
+type                 : 5 68 69 73
 vardec               : 4 33
 
 Parsing method: LALR
@@ -187,8 +187,8 @@ state 2
     (4) dec -> . vardec
     (76) dec -> . funcdec
     (5) vardec -> . idlist COLON type SEMICOLON
-    (70) funcdec -> . FUNCTION ID LRB paramdecs RRB block
-    (72) funcdec -> . FUNCTION ID LRB paramdecs RRB COLON type block
+    (72) funcdec -> . FUNCTION ID LRB paramdecs RRB block
+    (73) funcdec -> . FUNCTION ID LRB paramdecs RRB COLON type block
     (12) idlist -> . iddec
     (13) idlist -> . idlist COMMA iddec
     (9) iddec -> . ID
@@ -250,8 +250,8 @@ state 7
 
 state 8
 
-    (70) funcdec -> FUNCTION . ID LRB paramdecs RRB block
-    (72) funcdec -> FUNCTION . ID LRB paramdecs RRB COLON type block
+    (72) funcdec -> FUNCTION . ID LRB paramdecs RRB block
+    (73) funcdec -> FUNCTION . ID LRB paramdecs RRB COLON type block
 
     ID              shift and go to state 14
 
@@ -309,8 +309,8 @@ state 13
 
 state 14
 
-    (70) funcdec -> FUNCTION ID . LRB paramdecs RRB block
-    (72) funcdec -> FUNCTION ID . LRB paramdecs RRB COLON type block
+    (72) funcdec -> FUNCTION ID . LRB paramdecs RRB block
+    (73) funcdec -> FUNCTION ID . LRB paramdecs RRB COLON type block
 
     LRB             shift and go to state 23
 
@@ -334,8 +334,8 @@ state 15
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -385,8 +385,8 @@ state 16
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -473,8 +473,8 @@ state 22
 
 state 23
 
-    (70) funcdec -> FUNCTION ID LRB . paramdecs RRB block
-    (72) funcdec -> FUNCTION ID LRB . paramdecs RRB COLON type block
+    (72) funcdec -> FUNCTION ID LRB . paramdecs RRB block
+    (73) funcdec -> FUNCTION ID LRB . paramdecs RRB COLON type block
     (64) paramdecs -> . paramdecslist
     (65) paramdecs -> .
     (66) paramdecslist -> . paramdec
@@ -495,8 +495,8 @@ state 24
     (21) exp -> ID .
     (22) exp -> ID . LSB exp RSB
     (23) exp -> ID . LSB exp RSB ASSIGN exp
-    (71) exp -> ID . LRB RRB
-    (75) exp -> ID . LRB explist RRB
+    (70) exp -> ID . LRB RRB
+    (71) exp -> ID . LRB explist RRB
 
     ASSIGN          shift and go to state 43
     SUM             reduce using rule 21 (exp -> ID .)
@@ -574,8 +574,8 @@ state 26
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -649,8 +649,8 @@ state 28
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -737,8 +737,8 @@ state 30
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -968,8 +968,8 @@ state 39
 
 state 40
 
-    (70) funcdec -> FUNCTION ID LRB paramdecs . RRB block
-    (72) funcdec -> FUNCTION ID LRB paramdecs . RRB COLON type block
+    (72) funcdec -> FUNCTION ID LRB paramdecs . RRB block
+    (73) funcdec -> FUNCTION ID LRB paramdecs . RRB COLON type block
 
     RRB             shift and go to state 72
 
@@ -1010,8 +1010,8 @@ state 43
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -1062,8 +1062,8 @@ state 44
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -1096,10 +1096,10 @@ state 44
 
 state 45
 
-    (71) exp -> ID LRB . RRB
-    (75) exp -> ID LRB . explist RRB
-    (73) explist -> . exp
-    (74) explist -> . explist COMMA exp
+    (70) exp -> ID LRB . RRB
+    (71) exp -> ID LRB . explist RRB
+    (74) explist -> . exp
+    (75) explist -> . explist COMMA exp
     (14) exp -> . ID ASSIGN exp
     (15) exp -> . exp SUM exp
     (16) exp -> . exp SUB exp
@@ -1116,8 +1116,8 @@ state 45
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -1169,8 +1169,8 @@ state 46
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -1220,8 +1220,8 @@ state 47
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -1271,8 +1271,8 @@ state 48
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -1322,8 +1322,8 @@ state 49
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -1373,8 +1373,8 @@ state 50
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -1424,8 +1424,8 @@ state 51
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -1475,8 +1475,8 @@ state 52
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -1526,8 +1526,8 @@ state 53
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -1577,8 +1577,8 @@ state 54
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -1628,8 +1628,8 @@ state 55
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -1679,8 +1679,8 @@ state 56
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -1730,8 +1730,8 @@ state 57
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -1781,8 +1781,8 @@ state 58
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -1916,8 +1916,8 @@ state 61
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -1967,8 +1967,8 @@ state 62
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -2018,8 +2018,8 @@ state 63
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -2069,8 +2069,8 @@ state 64
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -2120,8 +2120,8 @@ state 65
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -2171,8 +2171,8 @@ state 66
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -2293,8 +2293,8 @@ state 69
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (28) block -> . LCB stmtlist RCB
     (5) vardec -> . idlist COLON type SEMICOLON
     (26) const -> . FLOATNUMBER
@@ -2367,8 +2367,8 @@ state 71
 
 state 72
 
-    (70) funcdec -> FUNCTION ID LRB paramdecs RRB . block
-    (72) funcdec -> FUNCTION ID LRB paramdecs RRB . COLON type block
+    (72) funcdec -> FUNCTION ID LRB paramdecs RRB . block
+    (73) funcdec -> FUNCTION ID LRB paramdecs RRB . COLON type block
     (28) block -> . LCB stmtlist RCB
 
     COLON           shift and go to state 114
@@ -2473,32 +2473,32 @@ state 75
 
 state 76
 
-    (71) exp -> ID LRB RRB .
+    (70) exp -> ID LRB RRB .
 
-    SUM             reduce using rule 71 (exp -> ID LRB RRB .)
-    SUB             reduce using rule 71 (exp -> ID LRB RRB .)
-    DIV             reduce using rule 71 (exp -> ID LRB RRB .)
-    MOD             reduce using rule 71 (exp -> ID LRB RRB .)
-    MUL             reduce using rule 71 (exp -> ID LRB RRB .)
-    AND             reduce using rule 71 (exp -> ID LRB RRB .)
-    OR              reduce using rule 71 (exp -> ID LRB RRB .)
-    GT              reduce using rule 71 (exp -> ID LRB RRB .)
-    LT              reduce using rule 71 (exp -> ID LRB RRB .)
-    NE              reduce using rule 71 (exp -> ID LRB RRB .)
-    EQ              reduce using rule 71 (exp -> ID LRB RRB .)
-    LE              reduce using rule 71 (exp -> ID LRB RRB .)
-    GE              reduce using rule 71 (exp -> ID LRB RRB .)
-    COLON           reduce using rule 71 (exp -> ID LRB RRB .)
-    COMMA           reduce using rule 71 (exp -> ID LRB RRB .)
-    RSB             reduce using rule 71 (exp -> ID LRB RRB .)
-    RRB             reduce using rule 71 (exp -> ID LRB RRB .)
-    SEMICOLON       reduce using rule 71 (exp -> ID LRB RRB .)
+    SUM             reduce using rule 70 (exp -> ID LRB RRB .)
+    SUB             reduce using rule 70 (exp -> ID LRB RRB .)
+    DIV             reduce using rule 70 (exp -> ID LRB RRB .)
+    MOD             reduce using rule 70 (exp -> ID LRB RRB .)
+    MUL             reduce using rule 70 (exp -> ID LRB RRB .)
+    AND             reduce using rule 70 (exp -> ID LRB RRB .)
+    OR              reduce using rule 70 (exp -> ID LRB RRB .)
+    GT              reduce using rule 70 (exp -> ID LRB RRB .)
+    LT              reduce using rule 70 (exp -> ID LRB RRB .)
+    NE              reduce using rule 70 (exp -> ID LRB RRB .)
+    EQ              reduce using rule 70 (exp -> ID LRB RRB .)
+    LE              reduce using rule 70 (exp -> ID LRB RRB .)
+    GE              reduce using rule 70 (exp -> ID LRB RRB .)
+    COLON           reduce using rule 70 (exp -> ID LRB RRB .)
+    COMMA           reduce using rule 70 (exp -> ID LRB RRB .)
+    RSB             reduce using rule 70 (exp -> ID LRB RRB .)
+    RRB             reduce using rule 70 (exp -> ID LRB RRB .)
+    SEMICOLON       reduce using rule 70 (exp -> ID LRB RRB .)
 
 
 state 77
 
-    (75) exp -> ID LRB explist . RRB
-    (74) explist -> explist . COMMA exp
+    (71) exp -> ID LRB explist . RRB
+    (75) explist -> explist . COMMA exp
 
     RRB             shift and go to state 117
     COMMA           shift and go to state 118
@@ -2506,7 +2506,7 @@ state 77
 
 state 78
 
-    (73) explist -> exp .
+    (74) explist -> exp .
     (15) exp -> exp . SUM exp
     (16) exp -> exp . SUB exp
     (17) exp -> exp . DIV exp
@@ -2521,8 +2521,8 @@ state 78
     (51) relopexp -> exp . LE exp
     (52) relopexp -> exp . GE exp
 
-    RRB             reduce using rule 73 (explist -> exp .)
-    COMMA           reduce using rule 73 (explist -> exp .)
+    RRB             reduce using rule 74 (explist -> exp .)
+    COMMA           reduce using rule 74 (explist -> exp .)
     SUM             shift and go to state 46
     SUB             shift and go to state 47
     DIV             shift and go to state 48
@@ -3678,8 +3678,8 @@ state 105
     (21) exp -> ID .
     (22) exp -> ID . LSB exp RSB
     (23) exp -> ID . LSB exp RSB ASSIGN exp
-    (71) exp -> ID . LRB RRB
-    (75) exp -> ID . LRB explist RRB
+    (70) exp -> ID . LRB RRB
+    (71) exp -> ID . LRB explist RRB
     (9) iddec -> ID .
     (10) iddec -> ID . ASSIGN exp
     (11) iddec -> ID . LSB exp RSB
@@ -3754,8 +3754,8 @@ state 110
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -3803,16 +3803,16 @@ state 112
 
 state 113
 
-    (70) funcdec -> FUNCTION ID LRB paramdecs RRB block .
+    (72) funcdec -> FUNCTION ID LRB paramdecs RRB block .
 
-    MAIN            reduce using rule 70 (funcdec -> FUNCTION ID LRB paramdecs RRB block .)
-    FUNCTION        reduce using rule 70 (funcdec -> FUNCTION ID LRB paramdecs RRB block .)
-    ID              reduce using rule 70 (funcdec -> FUNCTION ID LRB paramdecs RRB block .)
+    MAIN            reduce using rule 72 (funcdec -> FUNCTION ID LRB paramdecs RRB block .)
+    FUNCTION        reduce using rule 72 (funcdec -> FUNCTION ID LRB paramdecs RRB block .)
+    ID              reduce using rule 72 (funcdec -> FUNCTION ID LRB paramdecs RRB block .)
 
 
 state 114
 
-    (72) funcdec -> FUNCTION ID LRB paramdecs RRB COLON . type block
+    (73) funcdec -> FUNCTION ID LRB paramdecs RRB COLON . type block
     (6) type -> . INTEGER
     (7) type -> . FLOAT
     (8) type -> . BOOLEAN
@@ -3859,31 +3859,31 @@ state 116
 
 state 117
 
-    (75) exp -> ID LRB explist RRB .
+    (71) exp -> ID LRB explist RRB .
 
-    SUM             reduce using rule 75 (exp -> ID LRB explist RRB .)
-    SUB             reduce using rule 75 (exp -> ID LRB explist RRB .)
-    DIV             reduce using rule 75 (exp -> ID LRB explist RRB .)
-    MOD             reduce using rule 75 (exp -> ID LRB explist RRB .)
-    MUL             reduce using rule 75 (exp -> ID LRB explist RRB .)
-    AND             reduce using rule 75 (exp -> ID LRB explist RRB .)
-    OR              reduce using rule 75 (exp -> ID LRB explist RRB .)
-    GT              reduce using rule 75 (exp -> ID LRB explist RRB .)
-    LT              reduce using rule 75 (exp -> ID LRB explist RRB .)
-    NE              reduce using rule 75 (exp -> ID LRB explist RRB .)
-    EQ              reduce using rule 75 (exp -> ID LRB explist RRB .)
-    LE              reduce using rule 75 (exp -> ID LRB explist RRB .)
-    GE              reduce using rule 75 (exp -> ID LRB explist RRB .)
-    COLON           reduce using rule 75 (exp -> ID LRB explist RRB .)
-    COMMA           reduce using rule 75 (exp -> ID LRB explist RRB .)
-    RSB             reduce using rule 75 (exp -> ID LRB explist RRB .)
-    RRB             reduce using rule 75 (exp -> ID LRB explist RRB .)
-    SEMICOLON       reduce using rule 75 (exp -> ID LRB explist RRB .)
+    SUM             reduce using rule 71 (exp -> ID LRB explist RRB .)
+    SUB             reduce using rule 71 (exp -> ID LRB explist RRB .)
+    DIV             reduce using rule 71 (exp -> ID LRB explist RRB .)
+    MOD             reduce using rule 71 (exp -> ID LRB explist RRB .)
+    MUL             reduce using rule 71 (exp -> ID LRB explist RRB .)
+    AND             reduce using rule 71 (exp -> ID LRB explist RRB .)
+    OR              reduce using rule 71 (exp -> ID LRB explist RRB .)
+    GT              reduce using rule 71 (exp -> ID LRB explist RRB .)
+    LT              reduce using rule 71 (exp -> ID LRB explist RRB .)
+    NE              reduce using rule 71 (exp -> ID LRB explist RRB .)
+    EQ              reduce using rule 71 (exp -> ID LRB explist RRB .)
+    LE              reduce using rule 71 (exp -> ID LRB explist RRB .)
+    GE              reduce using rule 71 (exp -> ID LRB explist RRB .)
+    COLON           reduce using rule 71 (exp -> ID LRB explist RRB .)
+    COMMA           reduce using rule 71 (exp -> ID LRB explist RRB .)
+    RSB             reduce using rule 71 (exp -> ID LRB explist RRB .)
+    RRB             reduce using rule 71 (exp -> ID LRB explist RRB .)
+    SEMICOLON       reduce using rule 71 (exp -> ID LRB explist RRB .)
 
 
 state 118
 
-    (74) explist -> explist COMMA . exp
+    (75) explist -> explist COMMA . exp
     (14) exp -> . ID ASSIGN exp
     (15) exp -> . exp SUM exp
     (16) exp -> . exp SUB exp
@@ -3900,8 +3900,8 @@ state 118
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -3984,8 +3984,8 @@ state 121
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -4037,8 +4037,8 @@ state 122
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -4089,8 +4089,8 @@ state 123
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -4140,8 +4140,8 @@ state 124
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -4192,8 +4192,8 @@ state 125
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -4243,8 +4243,8 @@ state 126
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -4323,7 +4323,7 @@ state 128
 
 state 129
 
-    (72) funcdec -> FUNCTION ID LRB paramdecs RRB COLON type . block
+    (73) funcdec -> FUNCTION ID LRB paramdecs RRB COLON type . block
     (28) block -> . LCB stmtlist RCB
 
     LCB             shift and go to state 37
@@ -4349,8 +4349,8 @@ state 130
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -4383,7 +4383,7 @@ state 130
 
 state 131
 
-    (74) explist -> explist COMMA exp .
+    (75) explist -> explist COMMA exp .
     (15) exp -> exp . SUM exp
     (16) exp -> exp . SUB exp
     (17) exp -> exp . DIV exp
@@ -4398,8 +4398,8 @@ state 131
     (51) relopexp -> exp . LE exp
     (52) relopexp -> exp . GE exp
 
-    RRB             reduce using rule 74 (explist -> explist COMMA exp .)
-    COMMA           reduce using rule 74 (explist -> explist COMMA exp .)
+    RRB             reduce using rule 75 (explist -> explist COMMA exp .)
+    COMMA           reduce using rule 75 (explist -> explist COMMA exp .)
     SUM             shift and go to state 46
     SUB             shift and go to state 47
     DIV             shift and go to state 48
@@ -4614,8 +4614,8 @@ state 138
     (21) exp -> ID .
     (22) exp -> ID . LSB exp RSB
     (23) exp -> ID . LSB exp RSB ASSIGN exp
-    (71) exp -> ID . LRB RRB
-    (75) exp -> ID . LRB explist RRB
+    (70) exp -> ID . LRB RRB
+    (71) exp -> ID . LRB explist RRB
 
     IN              shift and go to state 149
     ASSIGN          shift and go to state 43
@@ -4705,11 +4705,11 @@ state 141
 
 state 142
 
-    (72) funcdec -> FUNCTION ID LRB paramdecs RRB COLON type block .
+    (73) funcdec -> FUNCTION ID LRB paramdecs RRB COLON type block .
 
-    MAIN            reduce using rule 72 (funcdec -> FUNCTION ID LRB paramdecs RRB COLON type block .)
-    FUNCTION        reduce using rule 72 (funcdec -> FUNCTION ID LRB paramdecs RRB COLON type block .)
-    ID              reduce using rule 72 (funcdec -> FUNCTION ID LRB paramdecs RRB COLON type block .)
+    MAIN            reduce using rule 73 (funcdec -> FUNCTION ID LRB paramdecs RRB COLON type block .)
+    FUNCTION        reduce using rule 73 (funcdec -> FUNCTION ID LRB paramdecs RRB COLON type block .)
+    ID              reduce using rule 73 (funcdec -> FUNCTION ID LRB paramdecs RRB COLON type block .)
 
 
 state 143
@@ -4826,8 +4826,8 @@ state 146
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (28) block -> . LCB stmtlist RCB
     (5) vardec -> . idlist COLON type SEMICOLON
     (26) const -> . FLOATNUMBER
@@ -4907,8 +4907,8 @@ state 147
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (28) block -> . LCB stmtlist RCB
     (5) vardec -> . idlist COLON type SEMICOLON
     (26) const -> . FLOATNUMBER
@@ -4977,8 +4977,8 @@ state 148
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -5202,8 +5202,8 @@ state 158
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -5264,8 +5264,8 @@ state 159
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (28) block -> . LCB stmtlist RCB
     (5) vardec -> . idlist COLON type SEMICOLON
     (26) const -> . FLOATNUMBER
@@ -5356,8 +5356,8 @@ state 161
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (28) block -> . LCB stmtlist RCB
     (5) vardec -> . idlist COLON type SEMICOLON
     (26) const -> . FLOATNUMBER
@@ -5546,8 +5546,8 @@ state 169
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (26) const -> . FLOATNUMBER
     (27) const -> . INTEGERNUMBER
     (62) const -> . TRUE
@@ -5608,8 +5608,8 @@ state 170
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (28) block -> . LCB stmtlist RCB
     (5) vardec -> . idlist COLON type SEMICOLON
     (26) const -> . FLOATNUMBER
@@ -5805,8 +5805,8 @@ state 176
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (28) block -> . LCB stmtlist RCB
     (5) vardec -> . idlist COLON type SEMICOLON
     (26) const -> . FLOATNUMBER
@@ -5887,8 +5887,8 @@ state 177
     (59) exp -> . exp AND exp
     (60) exp -> . exp OR exp
     (61) exp -> . NOT exp
-    (71) exp -> . ID LRB RRB
-    (75) exp -> . ID LRB explist RRB
+    (70) exp -> . ID LRB RRB
+    (71) exp -> . ID LRB explist RRB
     (28) block -> . LCB stmtlist RCB
     (5) vardec -> . idlist COLON type SEMICOLON
     (26) const -> . FLOATNUMBER

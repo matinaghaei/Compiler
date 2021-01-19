@@ -14,7 +14,7 @@ class Parser:
     # part 1 ----------------------------------------------------------------------------------------
     def p_program(self, p):
         "program : declist MAIN LRB RRB block"
-        self.codeGenerator.generate_main_code(p)
+        self.codeGenerator.generate_main_code(p, self.next_quad(), self.next_quad())
 
     def p_declist_empty(self, p):
         """
@@ -129,7 +129,7 @@ class Parser:
         """
         block : LCB stmtlist RCB
         """
-        self.codeGenerator.generate_block_code(p, self.next_quad())
+        self.codeGenerator.generate_block_code(p)
 
     def p_stmtlist(self, p):
         """
@@ -298,19 +298,19 @@ class Parser:
         exp : ID LRB RRB
         exp : ID LRB explist RRB
         """
-        self.codeGenerator.generate_exp_fun_code(p, self.new_temp())
+        self.codeGenerator.generate_exp_fun_code(p, self.new_temp(), self.new_temp(), self.next_quad())
 
     def p_funcdec(self, p):
         """
         funcdec : FUNCTION ID LRB paramdecs RRB block
         """
-        self.codeGenerator.generate_funcdec_code(p, self.next_quad())
+        self.codeGenerator.generate_funcdec_code(p, self.next_quad(), self.next_quad(), self.next_quad(), self.new_temp())
 
     def p_funcdec_return(self, p):
         """
         funcdec : FUNCTION ID LRB paramdecs RRB COLON type block
         """
-        self.codeGenerator.generate_funcdec_return_code(p, self.next_quad())
+        self.codeGenerator.generate_funcdec_return_code(p, self.next_quad(), self.next_quad(), self.next_quad(), self.new_temp())
 
     def p_explist(self, p):
         """

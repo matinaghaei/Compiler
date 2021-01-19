@@ -11,7 +11,7 @@ class CodeGenerator:
 
     # part 1 ----------------------------------------------------------------------------------------
 
-    def generate_main_code (self, p, q):
+    def generate_main_code(self, p, q1, q2):
         p[0] = NonTerminal()
         p[0].code = """#include <stdio.h>
 #include <setjmp.h>
@@ -43,12 +43,13 @@ int val, i;
 
 """
         if p[5].address:
-            q = p[5].address
-        p[1].next_list_back_patch(q)
+            q1 = p[5].address
+        p[1].next_list_back_patch(q1)
+        p[5].next_list_back_patch(q2)
         if p[5].address:
-            p[0].code += self.variables + "\nmain()\n{\n" + p[1].code + p[5].code + "}"
+            p[0].code += self.variables + "\nmain()\n{\n" + p[1].code + p[5].code + q2 + ": return 0;\n}"
         else:
-            p[0].code += self.variables + "\nmain()\n{\n" + p[1].code + q + ": " + p[5].code + "}"
+            p[0].code += self.variables + "\nmain()\n{\n" + p[1].code + q1 + ": " + p[5].code + q2 + ": return 0;\n}"
         print(p[0].code)
 
     def generate_declist_empty_code (self, p):
@@ -221,11 +222,8 @@ int val, i;
         p[0] = NonTerminal()
         p[0].value = p[1]
 
-    def generate_block_code(self, p, q):
+    def generate_block_code(self, p):
         p[0] = p[2]
-        if p[0].next_list:
-            p[0].next_list_back_patch(q)
-            p[0].code += q + ": printf(\"\");\n"
 
     def generate_stmtlist_code(self, p, q):
         if p[2].code:
@@ -632,7 +630,8 @@ int val, i;
     def generate_paramdecs_empty_code (self, p): 
         p[0] = []
     
-    def generate_funcdec_code (self, p, q1, q2, temp):
+    def generate_funcdec_code (self, p, q1, q2 ,q3, temp):
+        self.variables += "int " + temp + ";\n"
         param_names = p[4]
         number_of_params = len(param_names)
         p[0] = StatementTerminal()
@@ -654,7 +653,8 @@ int val, i;
                          f'arr_p = arr_p - 1' \
                          f'{param_names[i]} = array[arr_p];\n'
         self.func_stack = param_names + self.func_stack
-        p[0].code += p[6].code
+        p[6].next_list_back_patch(q3)
+        p[0].code += p[6].code + q3 + ": "
         while self.func_stack:
             param = self.func_stack.pop()
             p[0].code += f'stack_p = stack_p + 1;\n' \
@@ -663,7 +663,8 @@ int val, i;
                      f'{temp} = array[stack_p];\n' \
                      f'back_jmp({temp});\n'
 
-    def generate_funcdec_return_code(self, p, q1, q2, temp):
+    def generate_funcdec_return_code(self, p, q1, q2, q3, temp):
+        self.variables += "int " + temp + ";\n"
         param_names = p[4]
         number_of_params = len(param_names)
         p[0] = StatementTerminal()
@@ -685,7 +686,8 @@ int val, i;
                          f'arr_p = arr_p - 1' \
                          f'{param_names[i]} = array[arr_p];\n'
         self.func_stack = param_names + self.func_stack
-        p[0].code += p[8].code
+        p[8].next_list_back_patch(q3)
+        p[0].code += p[8].code + q3 + ": "
         while self.func_stack:
             param = self.func_stack.pop()
             p[0].code += f'stack_p = stack_p + 1;\n' \
@@ -696,13 +698,19 @@ int val, i;
                      f'stack_p = stack_p - 1;\n' \
                      f'back_jmp({temp});\n'
 
-    def generate_exp_fun_code(self, p, temp):
-        p[0] = NonTerminal()
+    def generate_exp_fun_code(self, p, temp, temp2, q):
+        self.variables += "int " + temp + ";\n"
+        self.variables += "int " + temp2 + ";\n"
+        p[0] = StatementTerminal()
         p[0].code = f'array[stack_p] = arr_p;\n' \
                     f'stack_p = stack_p - 1;\n' \
+                    f'{temp2} = 0;\n' \
+                    f'forward_jmp(arr_p);\n' \
+                    f'{q}: if({temp2}) goto -;\n' \
                     f'arr_p = arr_p + 64;\n' \
-                    f'forward_jmp(arr_p - 64);\n' \
+                    f'{temp2} = 1;\n' \
                     f'goto {self.function_dict[p[1]][0]};\n'
+        p[0].next_list = [q]
         if self.function_dict[p[1]][1] == 1:
             p[0].code += f'{temp} = array[stack_p];\n' \
                          f'stack_p = stack_p + 1;\n'
