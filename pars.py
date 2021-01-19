@@ -296,9 +296,12 @@ class Parser:
     def p_exp_fun(self, p):
         """
         exp : ID LRB RRB
-        exp : ID LRB explist RRB
         """
-        self.codeGenerator.generate_exp_fun_code(p, self.new_temp(), self.new_temp(), self.next_quad())
+        self.codeGenerator.generate_exp_fun_code(p, self.new_temp(), self.new_temp(), self.next_quad(), self.next_quad())
+
+    def p_exp_fun_explist(self, p):
+        "exp : ID LRB explist RRB"
+        self.codeGenerator.generate_exp_fun_explist_code(p, self.new_temp(), self.new_temp(), self.next_quad(), self.next_quad(), self.next_quad())
 
     def p_funcdec(self, p):
         """
@@ -310,7 +313,7 @@ class Parser:
         """
         funcdec : FUNCTION ID LRB paramdecs RRB COLON type block
         """
-        self.codeGenerator.generate_funcdec_return_code(p, self.next_quad(), self.next_quad(), self.next_quad(), self.new_temp())
+        self.codeGenerator.generate_funcdec_return_code(p, self.next_quad(), self.next_quad(), self.next_quad(), self.new_temp(), self.new_temp())
 
     def p_explist(self, p):
         """
@@ -322,7 +325,7 @@ class Parser:
         """
         explist : explist COMMA exp
         """
-        self.codeGenerator.generate_explist_comma_code(p)
+        self.codeGenerator.generate_explist_comma_code(p, self.next_quad())
 
     def p_dec_funcdec(self, p):
         """
