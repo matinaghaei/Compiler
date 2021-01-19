@@ -11,7 +11,7 @@ class CodeGenerator:
 
     # part 1 ----------------------------------------------------------------------------------------
 
-    def generate_main_code (self, p):
+    def generate_main_code (self, p, q):
         p[0] = NonTerminal()
         p[0].code = """#include <stdio.h>
 #include <setjmp.h>
@@ -41,7 +41,14 @@ int val, i;
         env.env_in_int.env[i] = array[position + i];		\\
     longjmp(env.env_in_buf, 1)
 
-""" + self.variables + "\nmain()\n{\n" + p[1].code + p[5].code + "}"
+"""
+        if p[5].address:
+            q = p[5].address
+        p[1].next_list_back_patch(q)
+        if p[5].address:
+            p[0].code += self.variables + "\nmain()\n{\n" + p[1].code + p[5].code + "}"
+        else:
+            p[0].code += self.variables + "\nmain()\n{\n" + p[1].code + q + ": " + p[5].code + "}"
         print(p[0].code)
 
     def generate_declist_empty_code (self, p):
@@ -625,15 +632,18 @@ int val, i;
     def generate_paramdecs_empty_code (self, p): 
         p[0] = []
     
-    def generate_funcdec_code (self, p, q, temp):
+    def generate_funcdec_code (self, p, q1, q2, temp):
         param_names = p[4]
         number_of_params = len(param_names)
-        p[0] = NonTerminal()
+        p[0] = StatementTerminal()
+        p[0].address = q1
+        p[0].next_list = [q1]
+        p[0].code = f'{q1}: goto -;\n'
         if number_of_params > 0 or not p[6].address:
-            p[0].code = f'{q}: '
+            p[0].code += f'{q2}: '
         else:
-            q = p[6].address
-        self.function_dict[p[2]] = (q, 0)
+            q2 = p[6].address
+        self.function_dict[p[2]] = (q2, 0)
         for i in range(number_of_params):
             p[0].code += f'stack_p = stack_p + 1;\n' \
                          f'array[arr_p] = array[stack_p];\n' \
@@ -653,15 +663,18 @@ int val, i;
                      f'{temp} = array[stack_p];\n' \
                      f'back_jmp({temp});\n'
 
-    def generate_funcdec_return_code(self, p, q, temp):
+    def generate_funcdec_return_code(self, p, q1, q2, temp):
         param_names = p[4]
         number_of_params = len(param_names)
-        p[0] = NonTerminal()
+        p[0] = StatementTerminal()
+        p[0].address = q1
+        p[0].next_list = [q1]
+        p[0].code = f'{q1}: goto -;\n'
         if number_of_params > 0 or not p[8].address:
-            p[0].code = f'{q}: '
+            p[0].code = f'{q2}: '
         else:
-            q = p[8].address
-        self.function_dict[p[2]] = (q, 1)
+            q2 = p[8].address
+        self.function_dict[p[2]] = (q2, 1)
         for i in range(number_of_params):
             p[0].code += f'stack_p = stack_p + 1;\n' \
                          f'array[arr_p] = array[stack_p];\n' \

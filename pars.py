@@ -334,7 +334,7 @@ class Parser:
         """
         stmt : RETURN exp SEMICOLON
         """
-        self.p_stmt_return(p)
+        self.codeGenerator.generate_stmt_return_code(p)
 
     precedence = (
         ('right', "ASSIGN"),
