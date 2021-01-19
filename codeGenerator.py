@@ -6,7 +6,6 @@ class CodeGenerator:
     def __init__(self):
         self.variables = ""
         self.function_dict = {}
-        self.func_stack = []
         self.return_value = ""
 
     # part 1 ----------------------------------------------------------------------------------------
@@ -80,10 +79,11 @@ int val, i;
         p[0] = StatementTerminal()
         self.variables += 'int ' + p[1] + ';\n'
         p[0].code = f'array[stack_p] = {p[1]};\n stack_p = stack_p - 1;\n'
-        self.func_stack.append(p[1])
+        p[0].stack.append(p[1])
 
     def generate_idlist_comma_code(self, p, q):
         p[0] = StatementTerminal()
+        p[0].stack = p[1].stack + p[3].stack
         p[0].address = p[1].address
         if p[3].address:
             q = p[3].address
@@ -101,13 +101,15 @@ int val, i;
         p[0] = StatementTerminal()
         self.variables += "int " + p[1] + ";\n"
         self.variables += "int " + temp + ";\n"
+        p[0].code = f"array[stack_p] = {p[1]};\nstack_p = stack_p - 1;\n"
+        p[0].stack.append(p[1])
         p[0].code = p[1] + " = arr_p;\n" + "array[arr_p] = " + p[3].get_value() + ";\n" + temp + " = " + p[3].get_value() + " + 1;\narr_p  = arr_p + " + temp + ";\n"
 
     def generate_iddec_assign_code(self, p, q1, q2, q3):
         p[0] = StatementTerminal()
         self.variables += "int " + p[1] + ";\n"
         p[0].code = f"array[stack_p] = {p[1]};\nstack_p = stack_p - 1;\n"
-        self.func_stack.append(p[1])
+        p[0].stack.append(p[1])
         if isinstance(p[3], LogicTerminal):
             p[3].true_list_back_patch(q1)
             p[3].false_list_back_patch(q2)
@@ -228,6 +230,7 @@ int val, i;
     def generate_stmtlist_code(self, p, q):
         if p[2].code:
             p[0] = StatementTerminal()
+            p[0].stack = p[1].stack + p[2].stack
             if p[2].address:
                 q = p[2].address
             if p[1].code:
@@ -259,9 +262,7 @@ int val, i;
         p[0] = p[1]
 
     def generate_stmt_var_code(self, p):
-        p[0] = StatementTerminal()
-        p[0].address = p[1].address
-        p[0].code = p[1].code
+        p[0] = p[1]
 
     def generate_stmt_print_code(self, p):
         p[0] = StatementTerminal()
@@ -652,13 +653,12 @@ int val, i;
                          f'stack_p = stack_p - 1;\n' \
                          f'arr_p = arr_p - 1' \
                          f'{param_names[i]} = array[arr_p];\n'
-        self.func_stack = param_names + self.func_stack
+        func_stack = param_names + p[6].stack
         p[6].next_list_back_patch(q3)
         p[0].code += p[6].code + q3 + ": "
-        while self.func_stack:
-            param = self.func_stack.pop()
+        while func_stack:
             p[0].code += f'stack_p = stack_p + 1;\n' \
-                         f'{param} = array[stack_p];\n'
+                         f'{func_stack.pop()} = array[stack_p];\n'
         p[0].code += f'stack_p = stack_p + 1;\n' \
                      f'{temp} = array[stack_p];\n' \
                      f'back_jmp({temp});\n'
@@ -685,13 +685,12 @@ int val, i;
                          f'stack_p = stack_p - 1;\n' \
                          f'arr_p = arr_p - 1' \
                          f'{param_names[i]} = array[arr_p];\n'
-        self.func_stack = param_names + self.func_stack
+        func_stack = param_names + p[8].stack
         p[8].next_list_back_patch(q3)
         p[0].code += p[8].code + q3 + ": "
-        while self.func_stack:
-            param = self.func_stack.pop()
+        while func_stack:
             p[0].code += f'stack_p = stack_p + 1;\n' \
-                         f'{param} = array[stack_p];\n'
+                         f'{func_stack.pop()} = array[stack_p];\n'
         p[0].code += f'stack_p = stack_p + 1;\n' \
                      f'{temp} = array[stack_p];\n' \
                      f'array[stack_p] = {self.return_value};\n' \
@@ -706,7 +705,7 @@ int val, i;
                     f'stack_p = stack_p - 1;\n' \
                     f'{temp2} = 0;\n' \
                     f'forward_jmp(arr_p);\n' \
-                    f'{q}: if({temp2}) goto -;\n' \
+                    f'{q}: if({temp2} == 1) goto -;\n' \
                     f'arr_p = arr_p + 64;\n' \
                     f'{temp2} = 1;\n' \
                     f'goto {self.function_dict[p[1]][0]};\n'

@@ -44,6 +44,7 @@ class StatementTerminal(NonTerminal):
     def __init__(self):
         super().__init__()
         self.next_list = []
+        self.stack = []
 
     def next_list_back_patch(self, label):
         lines = self.code.split('\n')
