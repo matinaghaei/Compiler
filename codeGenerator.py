@@ -25,18 +25,18 @@ union jmp_buffer_union
 int arr[(int)1e6];
 int arr_p = 0;
 int stack_p = (int)1e6 - 1;
-int val, i;
+int val, index;
 
 #define forward_jmp(position)								\\
     val = 0;												\\
     val=setjmp(env.env_in_buf); 							\\
     if(!val)			 									\\
-        for(i = 0;i < 64;i++)								\\
-            arr[position + i] = env.env_in_int.env[i]
+        for(index = 0;index < 64;index++)								\\
+            arr[position + index] = env.env_in_int.env[index]
 
 #define back_jmp(position) 									\\
-    for(i = 0;i < 64;i++)									\\
-        env.env_in_int.env[i] = arr[position + i];		\\
+    for(index = 0;index < 64;index++)									\\
+        env.env_in_int.env[index] = arr[position + index];		\\
     longjmp(env.env_in_buf, 1)
 
 """
@@ -248,10 +248,6 @@ int val, i;
         if p[2].code:
             p[0] = StatementTerminal()
             p[0].stack = p[1].stack + p[2].stack
-            if p[1].return_value:
-                p[0].return_value = p[1].return_value
-            else:
-                p[0].return_value = p[2].return_value
             if p[2].address:
                 q = p[2].address
             if p[1].code:
@@ -266,8 +262,6 @@ int val, i;
             p[0].next_list = p[2].next_list
         else:
             p[0] = p[1]
-            if not p[0].return_value:
-                p[0].return_value = p[2].return_value
 
     def generate_stmtlist_empty_code(self, p):
         p[0] = StatementTerminal()
@@ -401,6 +395,7 @@ int val, i;
             p[4] = self.arith_to_logic(q4, q5, p[4])
 
         p[0] = LogicTerminal()
+        p[0].stack = p[1].stack + p[6].stack
         if p[4].address:
             q2 = p[4].address
         p[1].false_list_back_patch(q2)
@@ -429,6 +424,7 @@ int val, i;
             p[3] = self.arith_to_logic(q4, q5, p[3])
 
         p[0] = StatementTerminal()
+        p[0].stack = p[5].stack + p[6].stack
         p[0].address = p[3].address
         if p[5].address:
             q1 = p[5].address
@@ -459,6 +455,7 @@ int val, i;
             p[3] = self.arith_to_logic(q6, q7, p[3])
 
         p[0] = StatementTerminal()
+        p[0].stack = p[5].stack + p[6].stack + p[8].stack
         p[0].address = p[3].address
         if p[5].address:
             q1 = p[5].address
@@ -481,8 +478,9 @@ int val, i;
                 p[0].code += q2 + ": " + p[6].code
             p[0].next_list = p[5].next_list + p[6].false_list + p[6].true_list + [q3, q4] + p[8].next_list
         else:
+            p[3].false_list_back_patch(q5)
             p[0].code = p[3].code
-            p[0].next_list = p[3].false_list + p[5].next_list + [q4] + p[8].next_list
+            p[0].next_list = p[5].next_list + [q4] + p[8].next_list
             if p[5].address:
                 p[0].code += p[5].code
             else:
@@ -497,6 +495,7 @@ int val, i;
             p[3] = self.arith_to_logic(q3, q4, p[3])
 
         p[0] = StatementTerminal()
+        p[0].stack = p[5].stack
         if p[3].address:
             q1 = p[3].address
         p[0].address = q1
@@ -520,6 +519,7 @@ int val, i;
             p[5] = self.arith_to_logic(q3, q4, p[5])
 
         p[0] = StatementTerminal()
+        p[0].stack = p[9].stack
         p[0].code = p[3].code
         if p[5].address:
             q1 = p[5].address
@@ -564,6 +564,7 @@ int val, i;
         iteration_exp.false_list = [q4]
 
         p[0] = StatementTerminal()
+        p[0].stack = p[7].stack
         p[0].code = temp + ' = ' + p[5] + ';\n' + temp3 + ' = arr[' + temp + '];\n' + temp2 + ' = ' + temp + ' + 1;\n' + temp4 + ' = ' + temp2 + ' + ' + temp3 + ';\n'
         if iteration_exp.address:
             q1 = iteration_exp.address
@@ -582,6 +583,7 @@ int val, i;
 
     def generate_cases_code(self, p, q1, q2):
         p[0] = LogicTerminal()
+        p[0].stack = p[1].stack + p[2].stack
         if p[2].address:
             q2 = p[2].address
         p[1].false_list_back_patch(q2)
@@ -607,6 +609,7 @@ int val, i;
         logical_exp.false_list = [q2]
 
         p[0] = LogicTerminal()
+        p[0].stack = p[4].stack
         p[0].address = logical_exp.address
         if p[4].address:
             q3 = p[4].address
@@ -620,6 +623,7 @@ int val, i;
 
     def generate_stmt_case_code(self, p):
         p[0] = StatementTerminal()
+        p[0].stack = p[6].stack
         p[0].address = p[3].address
         p[0].code = p[3].code
         p[0].code += p[6].code.replace('$', p[3].get_value())
@@ -719,10 +723,10 @@ int val, i;
                          f'arr_p = arr_p - 1;\n' \
                          f'{param_names[i]} = arr[arr_p];\n'
         func_stack = param_names + p[8].stack
-        if p[8].code:
-            p[8].next_list_back_patch(q3)
-            p[0].code += p[8].code + q3 + ": "
-        p[0].code += f'{temp2} = {p[8].return_value};\n'
+        p[8].next_list_back_patch(q3)
+        p[0].code += p[8].code.replace('#', q3)
+        p[0].code += f'{q3}: stack_p = stack_p + 1;\n' \
+                     f'{temp2} = arr[stack_p];\n'
         while func_stack:
             p[0].code += f'stack_p = stack_p + 1;\n' \
                          f'{func_stack.pop()} = arr[stack_p];\n'
@@ -804,4 +808,6 @@ int val, i;
     def generate_stmt_return_code(self, p):
         p[0] = StatementTerminal()
         p[0].code = p[2].code
-        p[0].return_value = p[2].get_value()
+        p[0].code += f'arr[stack_p] = {p[2].get_value()};\n' \
+                     f'stack_p = stack_p - 1;\n' \
+                     f'goto #;\n'
