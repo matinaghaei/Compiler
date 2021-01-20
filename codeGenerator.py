@@ -6,6 +6,7 @@ class CodeGenerator:
     def __init__(self):
         self.variables = ""
         self.function_dict = {}
+        self.current_address = 0
 
     # part 1 ----------------------------------------------------------------------------------------
 
@@ -48,6 +49,12 @@ int val, index;
             p[0].code += self.variables + "\nmain()\n{\n" + p[1].code + p[5].code + q2 + ": return 0;\n}"
         else:
             p[0].code += self.variables + "\nmain()\n{\n" + p[1].code + q1 + ": " + p[5].code + q2 + ": return 0;\n}"
+        # print(f'Symbol Table of main')
+        # print('Name\tType\tAddress\tSize')
+        # func_stack = p[5].stack
+        # for i in range(len(func_stack)):
+        #     print(f'{func_stack[i]}\t\tint\t\t{self.current_address}\t\t4')
+        #     self.current_address += 4
         print(p[0].code)
 
     def generate_declist_empty_code (self, p):
@@ -277,6 +284,9 @@ int val, index;
 
     def generate_stmt_block_code(self, p):
         p[0] = p[1]
+        while p[0].stack:
+            p[0].code += f'stack_p = stack_p + 1;\n' \
+                         f'{p[0].stack.pop()} = arr[stack_p];\n'
 
     def generate_stmt_var_code(self, p):
         p[0] = p[1]
@@ -678,6 +688,12 @@ int val, index;
                          f'arr_p = arr_p - 1;\n' \
                          f'{param_names[i]} = arr[arr_p];\n'
         func_stack = param_names + p[6].stack
+        # print(f'Symbol Table of {p[2]}')
+        # print('Name\tType\tAddress\tSize')
+        # for i in range(len(func_stack)):
+        #     print(f'{func_stack[i]}\t\tint\t\t{self.current_address}\t\t4')
+        #     self.current_address += 4
+        # print()
         p[6].next_list_back_patch(q3)
         p[0].code += p[6].code + q3 + ": "
         while func_stack:
@@ -714,6 +730,12 @@ int val, index;
                          f'arr_p = arr_p - 1;\n' \
                          f'{param_names[i]} = arr[arr_p];\n'
         func_stack = param_names + p[8].stack
+        # print(f'Symbol Table of {p[2]}')
+        # print('Name\tType\tAddress\tSize')
+        # for i in range(len(func_stack)):
+        #     print(f'{func_stack[i]}\t\tint\t\t{self.current_address}\t\t4')
+        #     self.current_address += 4
+        # print()
         p[8].next_list_back_patch(q3)
         p[0].code += p[8].code.replace('#', q3)
         p[0].code += f'{q3}: stack_p = stack_p + 1;\n' \

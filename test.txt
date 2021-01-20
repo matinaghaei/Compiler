@@ -1,11 +1,51 @@
-result = 0,m = 0:int;
-
-fun func()
+array[16], merge_array[16]:int;
+fun copy(l:int, r:int)
 {
-    print(m);
+    while(l != r)
+    {
+        merge_array[l] = array[l];
+        l = l + 1;
+    }
+}
+
+fun merge(l:int, r:int)
+{
+    l1 = l, l2 = (l + r) / 2, mid = l2, ll = l:int;
+    while(ll < r)
+        if((l1 == mid or merge_array[l1] > merge_array[l2]) and l2 != r)
+        {
+            array[ll] = merge_array[l2];
+            l2 = l2 + 1;
+            ll = ll + 1;
+        }
+        else
+        {
+            array[ll] = merge_array[l1];
+            l1 = l1 + 1;
+            ll = ll + 1;
+        }
+}
+
+fun sort(l:int, r:int)
+{
+    if(l < r - 1)
+    {
+        mid = (r + l) / 2:int;
+        sort(l, mid);
+        sort(mid, r);
+        copy(l, r);
+        merge(l, r);
+    }
 }
 
 main()
 {
-    func();
+    i:int;
+    for(i = 0;i < 16 ;i = i + 1)
+        array[i] = (i * i * i) % 62;
+    for(i in array)
+        print(i);
+    sort(0, 16);
+    for(i in array)
+        print(i);
 }
