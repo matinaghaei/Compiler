@@ -395,7 +395,6 @@ int val, index;
             p[4] = self.arith_to_logic(q4, q5, p[4])
 
         p[0] = LogicTerminal()
-        p[0].stack = p[1].stack + p[6].stack
         if p[4].address:
             q2 = p[4].address
         p[1].false_list_back_patch(q2)
@@ -424,7 +423,6 @@ int val, index;
             p[3] = self.arith_to_logic(q4, q5, p[3])
 
         p[0] = StatementTerminal()
-        p[0].stack = p[5].stack + p[6].stack
         p[0].address = p[3].address
         if p[5].address:
             q1 = p[5].address
@@ -455,7 +453,6 @@ int val, index;
             p[3] = self.arith_to_logic(q6, q7, p[3])
 
         p[0] = StatementTerminal()
-        p[0].stack = p[5].stack + p[6].stack + p[8].stack
         p[0].address = p[3].address
         if p[5].address:
             q1 = p[5].address
@@ -495,7 +492,6 @@ int val, index;
             p[3] = self.arith_to_logic(q3, q4, p[3])
 
         p[0] = StatementTerminal()
-        p[0].stack = p[5].stack
         if p[3].address:
             q1 = p[3].address
         p[0].address = q1
@@ -519,7 +515,6 @@ int val, index;
             p[5] = self.arith_to_logic(q3, q4, p[5])
 
         p[0] = StatementTerminal()
-        p[0].stack = p[9].stack
         p[0].code = p[3].code
         if p[5].address:
             q1 = p[5].address
@@ -564,7 +559,6 @@ int val, index;
         iteration_exp.false_list = [q4]
 
         p[0] = StatementTerminal()
-        p[0].stack = p[7].stack
         p[0].code = temp + ' = ' + p[5] + ';\n' + temp3 + ' = arr[' + temp + '];\n' + temp2 + ' = ' + temp + ' + 1;\n' + temp4 + ' = ' + temp2 + ' + ' + temp3 + ';\n'
         if iteration_exp.address:
             q1 = iteration_exp.address
@@ -583,7 +577,6 @@ int val, index;
 
     def generate_cases_code(self, p, q1, q2):
         p[0] = LogicTerminal()
-        p[0].stack = p[1].stack + p[2].stack
         if p[2].address:
             q2 = p[2].address
         p[1].false_list_back_patch(q2)
@@ -609,7 +602,6 @@ int val, index;
         logical_exp.false_list = [q2]
 
         p[0] = LogicTerminal()
-        p[0].stack = p[4].stack
         p[0].address = logical_exp.address
         if p[4].address:
             q3 = p[4].address
@@ -623,7 +615,6 @@ int val, index;
 
     def generate_stmt_case_code(self, p):
         p[0] = StatementTerminal()
-        p[0].stack = p[6].stack
         p[0].address = p[3].address
         p[0].code = p[3].code
         p[0].code += p[6].code.replace('$', p[3].get_value())
