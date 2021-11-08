@@ -4,7 +4,7 @@ from pars import Parser
 
 def main():
     lexer = Lexer().build()
-    file = open('./test.txt')
+    file = open('./input.txt')
     text_input = file.read()
     file.close()
     lexer.input(text_input)
